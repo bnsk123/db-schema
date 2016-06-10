@@ -1,37 +1,37 @@
 ﻿CREATE SEQUENCE cmsdb.md_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE cmsdb.md_pk_seq OWNER TO cmsdb;
+ALTER TABLE cmsdb.md_pk_seq OWNER TO cmsuser;
 COMMENT ON SEQUENCE cmsdb.md_pk_seq IS 'metadata pk sequenece';
 
 CREATE SEQUENCE cmsdb.cm_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE cmsdb.cm_pk_seq OWNER TO cmsdb;
+ALTER TABLE cmsdb.cm_pk_seq OWNER TO cmsuser;
 COMMENT ON SEQUENCE cmsdb.cm_pk_seq IS 'cm pk sequenece';
 
 CREATE SEQUENCE cmsdb.ns_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE cmsdb.ns_pk_seq OWNER TO cmsdb;
+ALTER TABLE cmsdb.ns_pk_seq OWNER TO cmsuser;
 COMMENT ON SEQUENCE cmsdb.ns_pk_seq IS 'ns pk sequenece';
 
 CREATE SEQUENCE cmsdb.dj_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE cmsdb.dj_pk_seq OWNER TO cmsdb;
+ALTER TABLE cmsdb.dj_pk_seq OWNER TO cmsuser;
 COMMENT ON SEQUENCE cmsdb.dj_pk_seq IS 'dj pk sequenece';
 
 CREATE SEQUENCE cmsdb.event_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE cmsdb.event_pk_seq OWNER TO cmsdb;
+ALTER TABLE cmsdb.event_pk_seq OWNER TO cmsuser;
 COMMENT ON SEQUENCE cmsdb.event_pk_seq IS 'pk sequenece for events';
 
 CREATE SEQUENCE cmsdb.log_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE cmsdb.log_pk_seq OWNER TO cmsdb;
+ALTER TABLE cmsdb.log_pk_seq OWNER TO cmsuser;
 COMMENT ON SEQUENCE cmsdb.log_pk_seq IS 'pk sequenece for logs';
 
 ALTER TABLE cmsdb.md_classes ADD COLUMN format TEXT;

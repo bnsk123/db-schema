@@ -1,3 +1,3 @@
-CREATE SCHEMA kloopzcm
-       AUTHORIZATION kloopzcm;
-COMMENT ON SCHEMA kloopzcm IS 'schema for config management';
+CREATE SCHEMA cmsdb
+       AUTHORIZATION cmsuser;
+COMMENT ON SCHEMA cmsdb IS 'schema for config management';

@@ -1,12 +1,12 @@
 
-CREATE TABLE kloopzcm.dj_approval_states (
+CREATE TABLE cmsdb.dj_approval_states (
                 state_id INTEGER NOT NULL,
                 state_name VARCHAR(64) NOT NULL,
                 CONSTRAINT dj_approval_states_pk PRIMARY KEY (state_id)
 );
 
 
-CREATE TABLE kloopzcm.cms_vars (
+CREATE TABLE cmsdb.cms_vars (
                 var_id BIGINT NOT NULL,
                 var_name VARCHAR(64) NOT NULL,
                 var_value TEXT NOT NULL,
@@ -18,10 +18,10 @@ CREATE TABLE kloopzcm.cms_vars (
 
 
 CREATE UNIQUE INDEX cms_vars_idx
- ON kloopzcm.cms_vars
+ ON cmsdb.cms_vars
  ( var_name );
 
-CREATE TABLE kloopzcm.cms_lock (
+CREATE TABLE cmsdb.cms_lock (
                 lock_id BIGINT NOT NULL,
                 lock_name VARCHAR(64) NOT NULL,
                 locked_by VARCHAR(200) NOT NULL,
@@ -32,31 +32,31 @@ CREATE TABLE kloopzcm.cms_lock (
 
 
 CREATE UNIQUE INDEX cms_lock_uln
- ON kloopzcm.cms_lock
+ ON cmsdb.cms_lock
  ( lock_name );
 
-CREATE TABLE kloopzcm.cm_ops_proc_state (
+CREATE TABLE cmsdb.cm_ops_proc_state (
                 state_id INTEGER NOT NULL,
                 state_name VARCHAR(64) NOT NULL,
                 CONSTRAINT cm_ops_proc_state_pk PRIMARY KEY (state_id)
 );
 
 
-CREATE TABLE kloopzcm.cm_ops_action_state (
+CREATE TABLE cmsdb.cm_ops_action_state (
                 state_id INTEGER NOT NULL,
                 state_name VARCHAR(64) NOT NULL,
                 CONSTRAINT cm_ops_action_state_pk PRIMARY KEY (state_id)
 );
 
 
-CREATE TABLE kloopzcm.cms_event_type (
+CREATE TABLE cmsdb.cms_event_type (
                 event_type_id INTEGER NOT NULL,
                 event_type VARCHAR(64) NOT NULL,
                 CONSTRAINT cms_event_type_pk PRIMARY KEY (event_type_id)
 );
 
 
-CREATE TABLE kloopzcm.cms_ci_event_queue (
+CREATE TABLE cmsdb.cms_ci_event_queue (
                 event_id BIGINT NOT NULL,
                 source_pk BIGINT NOT NULL,
                 source_name VARCHAR(200) NOT NULL,
@@ -66,14 +66,14 @@ CREATE TABLE kloopzcm.cms_ci_event_queue (
 );
 
 
-CREATE TABLE kloopzcm.dj_deployment_states (
+CREATE TABLE cmsdb.dj_deployment_states (
                 state_id INTEGER NOT NULL,
                 state_name VARCHAR(64) NOT NULL,
                 CONSTRAINT dj_deployment_states_pk PRIMARY KEY (state_id)
 );
 
 
-CREATE TABLE kloopzcm.dj_release_rev_label (
+CREATE TABLE cmsdb.dj_release_rev_label (
                 release_id BIGINT NOT NULL,
                 revision SMALLINT NOT NULL,
                 rfc_id BIGINT NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE kloopzcm.dj_release_rev_label (
 );
 
 
-CREATE TABLE kloopzcm.ns_namespaces (
+CREATE TABLE cmsdb.ns_namespaces (
                 ns_id BIGINT NOT NULL,
                 ns_path VARCHAR(200) NOT NULL,
                 created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -91,38 +91,38 @@ CREATE TABLE kloopzcm.ns_namespaces (
 
 
 CREATE UNIQUE INDEX ns_namespaces_ak
- ON kloopzcm.ns_namespaces
+ ON cmsdb.ns_namespaces
  ( ns_path );
 
-CREATE TABLE kloopzcm.dj_deployment_rfc_states (
+CREATE TABLE cmsdb.dj_deployment_rfc_states (
                 state_id INTEGER NOT NULL,
                 state_name VARCHAR(64) NOT NULL,
                 CONSTRAINT dj_deployment_rfc_states_pk PRIMARY KEY (state_id)
 );
 
 
-CREATE TABLE kloopzcm.cm_ci_state (
+CREATE TABLE cmsdb.cm_ci_state (
                 ci_state_id INTEGER NOT NULL,
                 state_name VARCHAR(64) NOT NULL,
                 CONSTRAINT cm_ci_state_pk PRIMARY KEY (ci_state_id)
 );
 
 
-CREATE TABLE kloopzcm.dj_rfc_ci_actions (
+CREATE TABLE cmsdb.dj_rfc_ci_actions (
                 action_id INTEGER NOT NULL,
                 action_name VARCHAR(200) NOT NULL,
                 CONSTRAINT dj_rfc_ci_actions_pk PRIMARY KEY (action_id)
 );
 
 
-CREATE TABLE kloopzcm.dj_release_states (
+CREATE TABLE cmsdb.dj_release_states (
                 release_state_id INTEGER NOT NULL,
                 state_name VARCHAR(64) NOT NULL,
                 CONSTRAINT dj_release_states_pk PRIMARY KEY (release_state_id)
 );
 
 
-CREATE TABLE kloopzcm.dj_releases (
+CREATE TABLE cmsdb.dj_releases (
                 release_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
                 parent_release_id BIGINT,
@@ -140,10 +140,10 @@ CREATE TABLE kloopzcm.dj_releases (
 
 
 CREATE INDEX dj_releases_ns_idx
- ON kloopzcm.dj_releases
+ ON cmsdb.dj_releases
  ( ns_id );
 
-CREATE TABLE kloopzcm.dj_deployment (
+CREATE TABLE cmsdb.dj_deployment (
                 deployment_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
                 release_id BIGINT NOT NULL,
@@ -162,14 +162,14 @@ CREATE TABLE kloopzcm.dj_deployment (
 
 
 CREATE INDEX dj_deployment_ns_idx
- ON kloopzcm.dj_deployment
+ ON cmsdb.dj_deployment
  ( ns_id );
 
 CREATE INDEX dj_deployment_rl_idx
- ON kloopzcm.dj_deployment
+ ON cmsdb.dj_deployment
  ( release_id );
 
-CREATE TABLE kloopzcm.dj_dpmt_approvals (
+CREATE TABLE cmsdb.dj_dpmt_approvals (
                 approval_id BIGINT NOT NULL,
                 deployment_id BIGINT NOT NULL,
                 govern_ci_id BIGINT NOT NULL,
@@ -185,14 +185,14 @@ CREATE TABLE kloopzcm.dj_dpmt_approvals (
 
 
 CREATE INDEX dj_dpmt_approvals_dpmt_idx
- ON kloopzcm.dj_dpmt_approvals
+ ON cmsdb.dj_dpmt_approvals
  ( deployment_id );
 
 CREATE INDEX dj_dpmt_approvals_cid_idx
- ON kloopzcm.dj_dpmt_approvals
+ ON cmsdb.dj_dpmt_approvals
  ( govern_ci_id );
 
-CREATE TABLE kloopzcm.dj_deployment_state_hist (
+CREATE TABLE cmsdb.dj_deployment_state_hist (
                 hist_id BIGINT NOT NULL,
                 deployment_id BIGINT NOT NULL,
                 old_state_id INTEGER,
@@ -207,10 +207,10 @@ CREATE TABLE kloopzcm.dj_deployment_state_hist (
 
 
 CREATE INDEX dj_deployment_state_hist_idx
- ON kloopzcm.dj_deployment_state_hist
+ ON cmsdb.dj_deployment_state_hist
  ( deployment_id );
 
-CREATE TABLE kloopzcm.dj_deployment_rfc (
+CREATE TABLE cmsdb.dj_deployment_rfc (
                 deployment_rfc_id BIGINT NOT NULL,
                 deployment_id BIGINT NOT NULL,
                 state_id INTEGER NOT NULL,
@@ -224,14 +224,14 @@ CREATE TABLE kloopzcm.dj_deployment_rfc (
 
 
 CREATE INDEX dj_deployment_rfc_idx
- ON kloopzcm.dj_deployment_rfc
+ ON cmsdb.dj_deployment_rfc
  ( rfc_id );
 
 CREATE INDEX dj_deployment_rfc_d_idx1
- ON kloopzcm.dj_deployment_rfc
+ ON cmsdb.dj_deployment_rfc
  ( deployment_id );
 
-CREATE TABLE kloopzcm.cms_event_queue (
+CREATE TABLE cmsdb.cms_event_queue (
                 event_id BIGINT NOT NULL,
                 source_pk BIGINT NOT NULL,
                 source_name VARCHAR(200) NOT NULL,
@@ -241,7 +241,7 @@ CREATE TABLE kloopzcm.cms_event_queue (
 );
 
 
-CREATE TABLE kloopzcm.cm_ci_relation_attr_log (
+CREATE TABLE cmsdb.cm_ci_relation_attr_log (
                 log_id BIGINT NOT NULL,
                 log_time TIMESTAMP NOT NULL,
                 log_event INTEGER NOT NULL,
@@ -262,10 +262,10 @@ CREATE TABLE kloopzcm.cm_ci_relation_attr_log (
 
 
 CREATE INDEX cm_ci_rel_attr_log_crid
- ON kloopzcm.cm_ci_relation_attr_log
+ ON cmsdb.cm_ci_relation_attr_log
  ( ci_relation_id, ci_rel_attribute_id );
 
-CREATE TABLE kloopzcm.cm_ci_relation_log (
+CREATE TABLE cmsdb.cm_ci_relation_log (
                 log_id BIGINT NOT NULL,
                 log_time TIMESTAMP NOT NULL,
                 log_event INTEGER NOT NULL,
@@ -282,10 +282,10 @@ CREATE TABLE kloopzcm.cm_ci_relation_log (
 
 
 CREATE INDEX cm_ci_relation_log_crid
- ON kloopzcm.cm_ci_relation_log
+ ON cmsdb.cm_ci_relation_log
  ( ci_relation_id );
 
-CREATE TABLE kloopzcm.cm_ci_attribute_log (
+CREATE TABLE cmsdb.cm_ci_attribute_log (
                 log_id BIGINT NOT NULL,
                 log_time TIMESTAMP NOT NULL,
                 log_event INTEGER NOT NULL,
@@ -306,10 +306,10 @@ CREATE TABLE kloopzcm.cm_ci_attribute_log (
 
 
 CREATE INDEX cm_ci_attribute_log_ciid
- ON kloopzcm.cm_ci_attribute_log
+ ON cmsdb.cm_ci_attribute_log
  ( ci_id, ci_attribute_id );
 
-CREATE TABLE kloopzcm.cm_ci_log (
+CREATE TABLE cmsdb.cm_ci_log (
                 log_id BIGINT NOT NULL,
                 log_time TIMESTAMP NOT NULL,
                 log_event INTEGER NOT NULL,
@@ -327,10 +327,10 @@ CREATE TABLE kloopzcm.cm_ci_log (
 
 
 CREATE INDEX cm_ci_log_ciid
- ON kloopzcm.cm_ci_log
+ ON cmsdb.cm_ci_log
  ( ci_id );
 
-CREATE TABLE kloopzcm.md_relations (
+CREATE TABLE cmsdb.md_relations (
                 relation_id INTEGER NOT NULL,
                 relation_name VARCHAR(200) NOT NULL,
                 short_relation_name VARCHAR(200) NOT NULL,
@@ -341,14 +341,14 @@ CREATE TABLE kloopzcm.md_relations (
 
 
 CREATE UNIQUE INDEX md_relations_rln_idx
- ON kloopzcm.md_relations
+ ON cmsdb.md_relations
  ( relation_name );
 
 CREATE INDEX md_relations_srn_idx
- ON kloopzcm.md_relations
+ ON cmsdb.md_relations
  ( short_relation_name );
 
-CREATE TABLE kloopzcm.md_relation_attributes (
+CREATE TABLE cmsdb.md_relation_attributes (
                 attribute_id INTEGER NOT NULL,
                 relation_id INTEGER NOT NULL,
                 attribute_name VARCHAR(200) NOT NULL,
@@ -365,10 +365,10 @@ CREATE TABLE kloopzcm.md_relation_attributes (
 
 
 CREATE INDEX md_relation_attributes_r_idx
- ON kloopzcm.md_relation_attributes
+ ON cmsdb.md_relation_attributes
  ( relation_id );
 
-CREATE TABLE kloopzcm.md_classes (
+CREATE TABLE cmsdb.md_classes (
                 class_id INTEGER NOT NULL,
                 class_name VARCHAR(200) NOT NULL,
                 short_class_name VARCHAR(200) NOT NULL,
@@ -385,10 +385,10 @@ CREATE TABLE kloopzcm.md_classes (
 
 
 CREATE UNIQUE INDEX md_classes_cln_idx
- ON kloopzcm.md_classes
+ ON cmsdb.md_classes
  ( class_name );
 
-CREATE TABLE kloopzcm.md_class_actions (
+CREATE TABLE cmsdb.md_class_actions (
                 action_id INTEGER NOT NULL,
                 class_id INTEGER NOT NULL,
                 action_name VARCHAR(200) NOT NULL,
@@ -402,10 +402,10 @@ CREATE TABLE kloopzcm.md_class_actions (
 
 
 CREATE INDEX md_class_actions_cl_idx
- ON kloopzcm.md_class_actions
+ ON cmsdb.md_class_actions
  ( class_id );
 
-CREATE TABLE kloopzcm.dj_rfc_ci (
+CREATE TABLE cmsdb.dj_rfc_ci (
                 rfc_id BIGINT NOT NULL,
                 release_id BIGINT NOT NULL,
                 ci_id BIGINT NOT NULL,
@@ -427,26 +427,26 @@ CREATE TABLE kloopzcm.dj_rfc_ci (
 
 
 CREATE INDEX dj_rfc_ci_rcid_idx
- ON kloopzcm.dj_rfc_ci
+ ON cmsdb.dj_rfc_ci
  ( release_id, ci_id );
 
 CREATE INDEX dj_rfc_ci_3n_idx
- ON kloopzcm.dj_rfc_ci
+ ON cmsdb.dj_rfc_ci
  ( release_id, ns_id, class_id, ci_name );
 
 CREATE INDEX dj_rfc_ci_ns_idx
- ON kloopzcm.dj_rfc_ci
+ ON cmsdb.dj_rfc_ci
  ( ns_id );
 
 CREATE INDEX dj_rfc_ci_cl_idx
- ON kloopzcm.dj_rfc_ci
+ ON cmsdb.dj_rfc_ci
  ( class_id );
 
 CREATE INDEX dj_rfc_ci_ciid_idx
- ON kloopzcm.dj_rfc_ci
+ ON cmsdb.dj_rfc_ci
  ( ci_id ASC, release_id ASC );
 
-CREATE TABLE kloopzcm.dj_ns_opt (
+CREATE TABLE cmsdb.dj_ns_opt (
                 rfc_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
                 created TIMESTAMP NOT NULL,
@@ -455,10 +455,10 @@ CREATE TABLE kloopzcm.dj_ns_opt (
 
 
 CREATE INDEX dj_ns_opt_ns_id_idx
- ON kloopzcm.dj_ns_opt
+ ON cmsdb.dj_ns_opt
  ( ns_id );
 
-CREATE TABLE kloopzcm.dj_rfc_relation (
+CREATE TABLE cmsdb.dj_rfc_relation (
                 rfc_id BIGINT NOT NULL,
                 release_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
@@ -483,34 +483,34 @@ CREATE TABLE kloopzcm.dj_rfc_relation (
 
 
 CREATE INDEX dj_rfc_relation_crid_idx
- ON kloopzcm.dj_rfc_relation
+ ON cmsdb.dj_rfc_relation
  ( release_id, ci_relation_id );
 
 CREATE INDEX dj_rfc_rel_ns_idx
- ON kloopzcm.dj_rfc_relation
+ ON cmsdb.dj_rfc_relation
  ( ns_id );
 
 CREATE INDEX dj_rfc_rel_frfc_idx
- ON kloopzcm.dj_rfc_relation
+ ON cmsdb.dj_rfc_relation
  ( from_rfc_id );
 
 CREATE INDEX dj_rfc_rel_fcireltoci_idx
- ON kloopzcm.dj_rfc_relation
+ ON cmsdb.dj_rfc_relation
  ( from_ci_id, release_id, relation_id, to_ci_id );
 
 CREATE INDEX dj_rfc_rel_r_idx
- ON kloopzcm.dj_rfc_relation
+ ON cmsdb.dj_rfc_relation
  ( relation_id );
 
 CREATE INDEX dj_rfc_rel_trfc_idx
- ON kloopzcm.dj_rfc_relation
+ ON cmsdb.dj_rfc_relation
  ( to_rfc_id );
 
 CREATE INDEX dj_rfc_rel_tcirlsfromci_idx
- ON kloopzcm.dj_rfc_relation
+ ON cmsdb.dj_rfc_relation
  ( to_ci_id, release_id, relation_id, from_ci_id );
 
-CREATE TABLE kloopzcm.dj_rfc_relation_attributes (
+CREATE TABLE cmsdb.dj_rfc_relation_attributes (
                 rfc_attr_id BIGINT NOT NULL,
                 rfc_id BIGINT NOT NULL,
                 attribute_id INTEGER NOT NULL,
@@ -524,14 +524,14 @@ CREATE TABLE kloopzcm.dj_rfc_relation_attributes (
 
 
 CREATE INDEX dj_rfc_relation_attr_rfc_idx
- ON kloopzcm.dj_rfc_relation_attributes
+ ON cmsdb.dj_rfc_relation_attributes
  ( rfc_id );
 
 CREATE INDEX dj_rfc_relation_attr_a_idx
- ON kloopzcm.dj_rfc_relation_attributes
+ ON cmsdb.dj_rfc_relation_attributes
  ( attribute_id );
 
-CREATE TABLE kloopzcm.cm_ci (
+CREATE TABLE cmsdb.cm_ci (
                 ci_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
                 class_id INTEGER NOT NULL,
@@ -549,22 +549,22 @@ CREATE TABLE kloopzcm.cm_ci (
 
 
 CREATE UNIQUE INDEX df_ci_goid_idx
- ON kloopzcm.cm_ci
+ ON cmsdb.cm_ci
  ( ci_goid );
 
 CREATE UNIQUE INDEX cm_ci_3cols_idx
- ON kloopzcm.cm_ci
+ ON cmsdb.cm_ci
  ( ns_id, class_id, ci_name );
 
 CREATE INDEX cm_ci_ns_idx
- ON kloopzcm.cm_ci
+ ON cmsdb.cm_ci
  ( ns_id );
 
 CREATE INDEX cm_ci_cl_idx
- ON kloopzcm.cm_ci
+ ON cmsdb.cm_ci
  ( class_id );
 
-CREATE TABLE kloopzcm.cm_ns_opt (
+CREATE TABLE cmsdb.cm_ns_opt (
                 ci_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
                 created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -573,10 +573,10 @@ CREATE TABLE kloopzcm.cm_ns_opt (
 
 
 CREATE INDEX cm_ns_opt_ns_id_idx
- ON kloopzcm.cm_ns_opt
+ ON cmsdb.cm_ns_opt
  ( ns_id );
 
-CREATE TABLE kloopzcm.cm_ops_procedures (
+CREATE TABLE cmsdb.cm_ops_procedures (
                 ops_proc_id BIGINT NOT NULL,
                 ci_id BIGINT NOT NULL,
                 proc_name VARCHAR(64) NOT NULL,
@@ -592,14 +592,14 @@ CREATE TABLE kloopzcm.cm_ops_procedures (
 
 
 CREATE INDEX cm_ops_proc_ci_id_idx
- ON kloopzcm.cm_ops_procedures
+ ON cmsdb.cm_ops_procedures
  ( ci_id );
 
 CREATE INDEX cm_ops_proc_state_id_idx
- ON kloopzcm.cm_ops_procedures
+ ON cmsdb.cm_ops_procedures
  ( state_id );
 
-CREATE TABLE kloopzcm.cm_ops_actions (
+CREATE TABLE cmsdb.cm_ops_actions (
                 ops_action_id BIGINT NOT NULL,
                 ops_proc_id BIGINT NOT NULL,
                 ci_id BIGINT NOT NULL,
@@ -617,22 +617,22 @@ CREATE TABLE kloopzcm.cm_ops_actions (
 
 
 CREATE INDEX cm_ops_actions_proc_id_idx
- ON kloopzcm.cm_ops_actions
+ ON cmsdb.cm_ops_actions
  ( ops_proc_id );
 
 CREATE INDEX cm_ops_actions_ci_id_idx
- ON kloopzcm.cm_ops_actions
+ ON cmsdb.cm_ops_actions
  ( ci_id );
 
 CREATE INDEX cm_ops_actions_state_id_idx
- ON kloopzcm.cm_ops_actions
+ ON cmsdb.cm_ops_actions
  ( state_id );
 
 CREATE INDEX cm_ops_actions_ci_proc_idx
- ON kloopzcm.cm_ops_actions
+ ON cmsdb.cm_ops_actions
  ( ci_id, ops_proc_id );
 
-CREATE TABLE kloopzcm.cm_ci_relations (
+CREATE TABLE cmsdb.cm_ci_relations (
                 ci_relation_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
                 from_ci_id BIGINT NOT NULL,
@@ -651,30 +651,30 @@ CREATE TABLE kloopzcm.cm_ci_relations (
 
 
 CREATE UNIQUE INDEX cm_ci_relations_uniq_idx
- ON kloopzcm.cm_ci_relations
+ ON cmsdb.cm_ci_relations
  ( from_ci_id, relation_id, to_ci_id );
 
 CREATE UNIQUE INDEX cm_ci_relations_goid_idx
- ON kloopzcm.cm_ci_relations
+ ON cmsdb.cm_ci_relations
  ( relation_goid );
 
 CREATE INDEX cm_ci_relations_ns_idx
- ON kloopzcm.cm_ci_relations
+ ON cmsdb.cm_ci_relations
  ( ns_id );
 
 CREATE INDEX cm_ci_relations_fromci_idx
- ON kloopzcm.cm_ci_relations
+ ON cmsdb.cm_ci_relations
  ( from_ci_id );
 
 CREATE INDEX cm_ci_relations_toci_idx
- ON kloopzcm.cm_ci_relations
+ ON cmsdb.cm_ci_relations
  ( to_ci_id );
 
 CREATE INDEX cm_ci_relations_r_idx
- ON kloopzcm.cm_ci_relations
+ ON cmsdb.cm_ci_relations
  ( relation_id );
 
-CREATE TABLE kloopzcm.cm_ci_relation_attributes (
+CREATE TABLE cmsdb.cm_ci_relation_attributes (
                 ci_rel_attribute_id BIGINT NOT NULL,
                 ci_relation_id BIGINT NOT NULL,
                 attribute_id INTEGER NOT NULL,
@@ -689,14 +689,14 @@ CREATE TABLE kloopzcm.cm_ci_relation_attributes (
 
 
 CREATE INDEX cm_ci_relation_attr_ridx
- ON kloopzcm.cm_ci_relation_attributes
+ ON cmsdb.cm_ci_relation_attributes
  ( ci_relation_id );
 
 CREATE INDEX cm_ci_relation_attr_a_idx
- ON kloopzcm.cm_ci_relation_attributes
+ ON cmsdb.cm_ci_relation_attributes
  ( attribute_id );
 
-CREATE TABLE kloopzcm.md_class_relations (
+CREATE TABLE cmsdb.md_class_relations (
                 link_id INTEGER NOT NULL,
                 from_class_id INTEGER NOT NULL,
                 relation_id INTEGER NOT NULL,
@@ -710,22 +710,22 @@ CREATE TABLE kloopzcm.md_class_relations (
 
 
 CREATE UNIQUE INDEX md_class_relations_idx
- ON kloopzcm.md_class_relations
+ ON cmsdb.md_class_relations
  ( from_class_id, relation_id, to_class_id );
 
 CREATE INDEX md_class_relations_f_idx1
- ON kloopzcm.md_class_relations
+ ON cmsdb.md_class_relations
  ( from_class_id );
 
 CREATE INDEX md_class_relations_t_idx1
- ON kloopzcm.md_class_relations
+ ON cmsdb.md_class_relations
  ( to_class_id );
 
 CREATE INDEX md_class_relations_r_idx1
- ON kloopzcm.md_class_relations
+ ON cmsdb.md_class_relations
  ( relation_id );
 
-CREATE TABLE kloopzcm.md_class_attributes (
+CREATE TABLE cmsdb.md_class_attributes (
                 attribute_id INTEGER NOT NULL,
                 class_id INTEGER NOT NULL,
                 attribute_name VARCHAR(200) NOT NULL,
@@ -745,10 +745,10 @@ CREATE TABLE kloopzcm.md_class_attributes (
 
 
 CREATE INDEX md_class_attributes_cl_idx
- ON kloopzcm.md_class_attributes
+ ON cmsdb.md_class_attributes
  ( class_id );
 
-CREATE TABLE kloopzcm.dj_rfc_ci_attributes (
+CREATE TABLE cmsdb.dj_rfc_ci_attributes (
                 rfc_attr_id BIGINT NOT NULL,
                 rfc_id BIGINT NOT NULL,
                 attribute_id INTEGER NOT NULL,
@@ -762,14 +762,14 @@ CREATE TABLE kloopzcm.dj_rfc_ci_attributes (
 
 
 CREATE INDEX dj_rfc_ci_attr_rfc_idx
- ON kloopzcm.dj_rfc_ci_attributes
+ ON cmsdb.dj_rfc_ci_attributes
  ( rfc_id );
 
 CREATE INDEX dj_rfc_ci_attr_a_idx
- ON kloopzcm.dj_rfc_ci_attributes
+ ON cmsdb.dj_rfc_ci_attributes
  ( attribute_id );
 
-CREATE TABLE kloopzcm.cm_ci_attributes (
+CREATE TABLE cmsdb.cm_ci_attributes (
                 ci_attribute_id BIGINT NOT NULL,
                 ci_id BIGINT NOT NULL,
                 attribute_id INTEGER NOT NULL,
@@ -784,384 +784,384 @@ CREATE TABLE kloopzcm.cm_ci_attributes (
 
 
 CREATE UNIQUE INDEX cm_ci_attributes_uniq_attrid
- ON kloopzcm.cm_ci_attributes
+ ON cmsdb.cm_ci_attributes
  ( ci_id, attribute_id );
 
 CREATE INDEX cm_ci_attributes_ci_idx
- ON kloopzcm.cm_ci_attributes
+ ON cmsdb.cm_ci_attributes
  ( ci_id );
 
 CREATE INDEX cm_ci_attributes_attr_idx
- ON kloopzcm.cm_ci_attributes
+ ON cmsdb.cm_ci_attributes
  ( attribute_id );
 
-ALTER TABLE kloopzcm.dj_dpmt_approvals ADD CONSTRAINT dj_dpmt_approvals_states_fk
+ALTER TABLE cmsdb.dj_dpmt_approvals ADD CONSTRAINT dj_dpmt_approvals_states_fk
 FOREIGN KEY (state_id)
-REFERENCES kloopzcm.dj_approval_states (state_id)
+REFERENCES cmsdb.dj_approval_states (state_id)
 ON DELETE RESTRICT
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ops_procedures ADD CONSTRAINT cm_ops_procedures_st_fk
+ALTER TABLE cmsdb.cm_ops_procedures ADD CONSTRAINT cm_ops_procedures_st_fk
 FOREIGN KEY (state_id)
-REFERENCES kloopzcm.cm_ops_proc_state (state_id)
+REFERENCES cmsdb.cm_ops_proc_state (state_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ops_actions ADD CONSTRAINT cm_ops_actions_st_fk
+ALTER TABLE cmsdb.cm_ops_actions ADD CONSTRAINT cm_ops_actions_st_fk
 FOREIGN KEY (state_id)
-REFERENCES kloopzcm.cm_ops_action_state (state_id)
+REFERENCES cmsdb.cm_ops_action_state (state_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cms_event_queue ADD CONSTRAINT cms_event_queue_etid_fk
+ALTER TABLE cmsdb.cms_event_queue ADD CONSTRAINT cms_event_queue_etid_fk
 FOREIGN KEY (event_type_id)
-REFERENCES kloopzcm.cms_event_type (event_type_id)
+REFERENCES cmsdb.cms_event_type (event_type_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cms_ci_event_queue ADD CONSTRAINT cms_ci_event_queue_etid_fk
+ALTER TABLE cmsdb.cms_ci_event_queue ADD CONSTRAINT cms_ci_event_queue_etid_fk
 FOREIGN KEY (event_type_id)
-REFERENCES kloopzcm.cms_event_type (event_type_id)
+REFERENCES cmsdb.cms_event_type (event_type_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_deployment ADD CONSTRAINT dj_deployment_states_dj_deployment_fk
+ALTER TABLE cmsdb.dj_deployment ADD CONSTRAINT dj_deployment_states_dj_deployment_fk
 FOREIGN KEY (state_id)
-REFERENCES kloopzcm.dj_deployment_states (state_id)
+REFERENCES cmsdb.dj_deployment_states (state_id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci ADD CONSTRAINT cm_ci_ns_fk
+ALTER TABLE cmsdb.cm_ci ADD CONSTRAINT cm_ci_ns_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_ci ADD CONSTRAINT dj_ci_rfc_ns_fk
+ALTER TABLE cmsdb.dj_rfc_ci ADD CONSTRAINT dj_ci_rfc_ns_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_releases ADD CONSTRAINT cm_namespaces_dj_releases_fk
+ALTER TABLE cmsdb.dj_releases ADD CONSTRAINT cm_namespaces_dj_releases_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_deployment ADD CONSTRAINT cm_namespaces_dj_deployment_fk
+ALTER TABLE cmsdb.dj_deployment ADD CONSTRAINT cm_namespaces_dj_deployment_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation ADD CONSTRAINT dj_rfc_relation_ns_fk
+ALTER TABLE cmsdb.dj_rfc_relation ADD CONSTRAINT dj_rfc_relation_ns_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_relations ADD CONSTRAINT cm_ci_relations_ns_fk
+ALTER TABLE cmsdb.cm_ci_relations ADD CONSTRAINT cm_ci_relations_ns_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ns_opt ADD CONSTRAINT ns_path_cm_ns_opt_fk
+ALTER TABLE cmsdb.cm_ns_opt ADD CONSTRAINT ns_path_cm_ns_opt_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_ns_opt ADD CONSTRAINT ns_dj_ns_opt_fk
+ALTER TABLE cmsdb.dj_ns_opt ADD CONSTRAINT ns_dj_ns_opt_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_deployment_rfc ADD CONSTRAINT dj_deployment_rfc_dprfcstid_fk
+ALTER TABLE cmsdb.dj_deployment_rfc ADD CONSTRAINT dj_deployment_rfc_dprfcstid_fk
 FOREIGN KEY (state_id)
-REFERENCES kloopzcm.dj_deployment_rfc_states (state_id)
+REFERENCES cmsdb.dj_deployment_rfc_states (state_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci ADD CONSTRAINT cm_ci_stid_fk
+ALTER TABLE cmsdb.cm_ci ADD CONSTRAINT cm_ci_stid_fk
 FOREIGN KEY (ci_state_id)
-REFERENCES kloopzcm.cm_ci_state (ci_state_id)
+REFERENCES cmsdb.cm_ci_state (ci_state_id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_relations ADD CONSTRAINT cm_ci_relations_stid_fk
+ALTER TABLE cmsdb.cm_ci_relations ADD CONSTRAINT cm_ci_relations_stid_fk
 FOREIGN KEY (ci_state_id)
-REFERENCES kloopzcm.cm_ci_state (ci_state_id)
+REFERENCES cmsdb.cm_ci_state (ci_state_id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_ci ADD CONSTRAINT dj_rfc_ci_ciaid_fk
+ALTER TABLE cmsdb.dj_rfc_ci ADD CONSTRAINT dj_rfc_ci_ciaid_fk
 FOREIGN KEY (action_id)
-REFERENCES kloopzcm.dj_rfc_ci_actions (action_id)
+REFERENCES cmsdb.dj_rfc_ci_actions (action_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation ADD CONSTRAINT dj_relation_rfc_actid_fk
+ALTER TABLE cmsdb.dj_rfc_relation ADD CONSTRAINT dj_relation_rfc_actid_fk
 FOREIGN KEY (action_id)
-REFERENCES kloopzcm.dj_rfc_ci_actions (action_id)
+REFERENCES cmsdb.dj_rfc_ci_actions (action_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_releases ADD CONSTRAINT dj_releases_rsid_fk
+ALTER TABLE cmsdb.dj_releases ADD CONSTRAINT dj_releases_rsid_fk
 FOREIGN KEY (release_state_id)
-REFERENCES kloopzcm.dj_release_states (release_state_id)
+REFERENCES cmsdb.dj_release_states (release_state_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_ci ADD CONSTRAINT dj_rfc_rid_fk
+ALTER TABLE cmsdb.dj_rfc_ci ADD CONSTRAINT dj_rfc_rid_fk
 FOREIGN KEY (release_id)
-REFERENCES kloopzcm.dj_releases (release_id)
+REFERENCES cmsdb.dj_releases (release_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation ADD CONSTRAINT dj_relation_rfc_relid_fk
+ALTER TABLE cmsdb.dj_rfc_relation ADD CONSTRAINT dj_relation_rfc_relid_fk
 FOREIGN KEY (release_id)
-REFERENCES kloopzcm.dj_releases (release_id)
+REFERENCES cmsdb.dj_releases (release_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_deployment ADD CONSTRAINT dj_deployment_rid_fk
+ALTER TABLE cmsdb.dj_deployment ADD CONSTRAINT dj_deployment_rid_fk
 FOREIGN KEY (release_id)
-REFERENCES kloopzcm.dj_releases (release_id)
+REFERENCES cmsdb.dj_releases (release_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_deployment_rfc ADD CONSTRAINT dj_deployment_dj_deployment_rfc_fk
+ALTER TABLE cmsdb.dj_deployment_rfc ADD CONSTRAINT dj_deployment_dj_deployment_rfc_fk
 FOREIGN KEY (deployment_id)
-REFERENCES kloopzcm.dj_deployment (deployment_id)
+REFERENCES cmsdb.dj_deployment (deployment_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_deployment_state_hist ADD CONSTRAINT dj_deployment_state_hist_fk
+ALTER TABLE cmsdb.dj_deployment_state_hist ADD CONSTRAINT dj_deployment_state_hist_fk
 FOREIGN KEY (deployment_id)
-REFERENCES kloopzcm.dj_deployment (deployment_id)
+REFERENCES cmsdb.dj_deployment (deployment_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_dpmt_approvals ADD CONSTRAINT dj_dpmt_approvals_dpmt_id_fk
+ALTER TABLE cmsdb.dj_dpmt_approvals ADD CONSTRAINT dj_dpmt_approvals_dpmt_id_fk
 FOREIGN KEY (deployment_id)
-REFERENCES kloopzcm.dj_deployment (deployment_id)
+REFERENCES cmsdb.dj_deployment (deployment_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.md_relation_attributes ADD CONSTRAINT md_relation_attributes_mdrid_fk
+ALTER TABLE cmsdb.md_relation_attributes ADD CONSTRAINT md_relation_attributes_mdrid_fk
 FOREIGN KEY (relation_id)
-REFERENCES kloopzcm.md_relations (relation_id)
+REFERENCES cmsdb.md_relations (relation_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.md_class_relations ADD CONSTRAINT md_class_relations_mdrid_fk
+ALTER TABLE cmsdb.md_class_relations ADD CONSTRAINT md_class_relations_mdrid_fk
 FOREIGN KEY (relation_id)
-REFERENCES kloopzcm.md_relations (relation_id)
+REFERENCES cmsdb.md_relations (relation_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_relations ADD CONSTRAINT df_ci_relations_mdrid_fk
+ALTER TABLE cmsdb.cm_ci_relations ADD CONSTRAINT df_ci_relations_mdrid_fk
 FOREIGN KEY (relation_id)
-REFERENCES kloopzcm.md_relations (relation_id)
+REFERENCES cmsdb.md_relations (relation_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation ADD CONSTRAINT dj_relation_rfc_rid_fk
+ALTER TABLE cmsdb.dj_rfc_relation ADD CONSTRAINT dj_relation_rfc_rid_fk
 FOREIGN KEY (relation_id)
-REFERENCES kloopzcm.md_relations (relation_id)
+REFERENCES cmsdb.md_relations (relation_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_relation_attributes ADD CONSTRAINT cm_ci_relation_attributes_raid_fk
+ALTER TABLE cmsdb.cm_ci_relation_attributes ADD CONSTRAINT cm_ci_relation_attributes_raid_fk
 FOREIGN KEY (attribute_id)
-REFERENCES kloopzcm.md_relation_attributes (attribute_id)
+REFERENCES cmsdb.md_relation_attributes (attribute_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation_attributes ADD CONSTRAINT md_relation_attributes_dj_rfc_relation_attributes_fk
+ALTER TABLE cmsdb.dj_rfc_relation_attributes ADD CONSTRAINT md_relation_attributes_dj_rfc_relation_attributes_fk
 FOREIGN KEY (attribute_id)
-REFERENCES kloopzcm.md_relation_attributes (attribute_id)
+REFERENCES cmsdb.md_relation_attributes (attribute_id)
 ON DELETE RESTRICT
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.md_class_attributes ADD CONSTRAINT md_class_attributes_clid_fk
+ALTER TABLE cmsdb.md_class_attributes ADD CONSTRAINT md_class_attributes_clid_fk
 FOREIGN KEY (class_id)
-REFERENCES kloopzcm.md_classes (class_id)
+REFERENCES cmsdb.md_classes (class_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.md_class_relations ADD CONSTRAINT md_class_relations_frcl_fk
+ALTER TABLE cmsdb.md_class_relations ADD CONSTRAINT md_class_relations_frcl_fk
 FOREIGN KEY (from_class_id)
-REFERENCES kloopzcm.md_classes (class_id)
+REFERENCES cmsdb.md_classes (class_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.md_class_relations ADD CONSTRAINT md_class_relations_tocl_fk
+ALTER TABLE cmsdb.md_class_relations ADD CONSTRAINT md_class_relations_tocl_fk
 FOREIGN KEY (to_class_id)
-REFERENCES kloopzcm.md_classes (class_id)
+REFERENCES cmsdb.md_classes (class_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci ADD CONSTRAINT cm_ci_clid_fk
+ALTER TABLE cmsdb.cm_ci ADD CONSTRAINT cm_ci_clid_fk
 FOREIGN KEY (class_id)
-REFERENCES kloopzcm.md_classes (class_id)
+REFERENCES cmsdb.md_classes (class_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_ci ADD CONSTRAINT dj_rfc_ci_clid_fk
+ALTER TABLE cmsdb.dj_rfc_ci ADD CONSTRAINT dj_rfc_ci_clid_fk
 FOREIGN KEY (class_id)
-REFERENCES kloopzcm.md_classes (class_id)
+REFERENCES cmsdb.md_classes (class_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.md_class_actions ADD CONSTRAINT md_class_actions_cl_fk
+ALTER TABLE cmsdb.md_class_actions ADD CONSTRAINT md_class_actions_cl_fk
 FOREIGN KEY (class_id)
-REFERENCES kloopzcm.md_classes (class_id)
+REFERENCES cmsdb.md_classes (class_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_ci_attributes ADD CONSTRAINT dj_rfc_ci_attributes_ciid_fk
+ALTER TABLE cmsdb.dj_rfc_ci_attributes ADD CONSTRAINT dj_rfc_ci_attributes_ciid_fk
 FOREIGN KEY (rfc_id)
-REFERENCES kloopzcm.dj_rfc_ci (rfc_id)
+REFERENCES cmsdb.dj_rfc_ci (rfc_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation ADD CONSTRAINT dj_rfc_ci_dj_rfc_relation_fk
+ALTER TABLE cmsdb.dj_rfc_relation ADD CONSTRAINT dj_rfc_ci_dj_rfc_relation_fk
 FOREIGN KEY (from_rfc_id)
-REFERENCES kloopzcm.dj_rfc_ci (rfc_id)
+REFERENCES cmsdb.dj_rfc_ci (rfc_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation ADD CONSTRAINT dj_rfc_ci_dj_rfc_relation_fk1
+ALTER TABLE cmsdb.dj_rfc_relation ADD CONSTRAINT dj_rfc_ci_dj_rfc_relation_fk1
 FOREIGN KEY (to_rfc_id)
-REFERENCES kloopzcm.dj_rfc_ci (rfc_id)
+REFERENCES cmsdb.dj_rfc_ci (rfc_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_ns_opt ADD CONSTRAINT dj_rfc_ci_dj_ns_opt_fk
+ALTER TABLE cmsdb.dj_ns_opt ADD CONSTRAINT dj_rfc_ci_dj_ns_opt_fk
 FOREIGN KEY (rfc_id)
-REFERENCES kloopzcm.dj_rfc_ci (rfc_id)
+REFERENCES cmsdb.dj_rfc_ci (rfc_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_relation_attributes ADD CONSTRAINT rfc_relation_attributes_rfcrid_fk
+ALTER TABLE cmsdb.dj_rfc_relation_attributes ADD CONSTRAINT rfc_relation_attributes_rfcrid_fk
 FOREIGN KEY (rfc_id)
-REFERENCES kloopzcm.dj_rfc_relation (rfc_id)
+REFERENCES cmsdb.dj_rfc_relation (rfc_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_attributes ADD CONSTRAINT cm_ci_attributes_ciid_fk
+ALTER TABLE cmsdb.cm_ci_attributes ADD CONSTRAINT cm_ci_attributes_ciid_fk
 FOREIGN KEY (ci_id)
-REFERENCES kloopzcm.cm_ci (ci_id)
+REFERENCES cmsdb.cm_ci (ci_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_relations ADD CONSTRAINT cm_ci_relations_frid_fk
+ALTER TABLE cmsdb.cm_ci_relations ADD CONSTRAINT cm_ci_relations_frid_fk
 FOREIGN KEY (from_ci_id)
-REFERENCES kloopzcm.cm_ci (ci_id)
+REFERENCES cmsdb.cm_ci (ci_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_relations ADD CONSTRAINT cm_ci_relations_toid_fk
+ALTER TABLE cmsdb.cm_ci_relations ADD CONSTRAINT cm_ci_relations_toid_fk
 FOREIGN KEY (to_ci_id)
-REFERENCES kloopzcm.cm_ci (ci_id)
+REFERENCES cmsdb.cm_ci (ci_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ops_procedures ADD CONSTRAINT cm_ops_procedures_ci_fk
+ALTER TABLE cmsdb.cm_ops_procedures ADD CONSTRAINT cm_ops_procedures_ci_fk
 FOREIGN KEY (ci_id)
-REFERENCES kloopzcm.cm_ci (ci_id)
+REFERENCES cmsdb.cm_ci (ci_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ops_actions ADD CONSTRAINT cm_ops_actions_ci_fk
+ALTER TABLE cmsdb.cm_ops_actions ADD CONSTRAINT cm_ops_actions_ci_fk
 FOREIGN KEY (ci_id)
-REFERENCES kloopzcm.cm_ci (ci_id)
+REFERENCES cmsdb.cm_ci (ci_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ns_opt ADD CONSTRAINT cm_ci_cm_ns_opt_fk
+ALTER TABLE cmsdb.cm_ns_opt ADD CONSTRAINT cm_ci_cm_ns_opt_fk
 FOREIGN KEY (ci_id)
-REFERENCES kloopzcm.cm_ci (ci_id)
+REFERENCES cmsdb.cm_ci (ci_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ops_actions ADD CONSTRAINT cm_ops_actions_proc_fk
+ALTER TABLE cmsdb.cm_ops_actions ADD CONSTRAINT cm_ops_actions_proc_fk
 FOREIGN KEY (ops_proc_id)
-REFERENCES kloopzcm.cm_ops_procedures (ops_proc_id)
+REFERENCES cmsdb.cm_ops_procedures (ops_proc_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_relation_attributes ADD CONSTRAINT cm_ci_relation_attributes_crid_fk
+ALTER TABLE cmsdb.cm_ci_relation_attributes ADD CONSTRAINT cm_ci_relation_attributes_crid_fk
 FOREIGN KEY (ci_relation_id)
-REFERENCES kloopzcm.cm_ci_relations (ci_relation_id)
+REFERENCES cmsdb.cm_ci_relations (ci_relation_id)
 ON DELETE CASCADE
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.cm_ci_attributes ADD CONSTRAINT cm_ci_attributes_attr_fk
+ALTER TABLE cmsdb.cm_ci_attributes ADD CONSTRAINT cm_ci_attributes_attr_fk
 FOREIGN KEY (attribute_id)
-REFERENCES kloopzcm.md_class_attributes (attribute_id)
+REFERENCES cmsdb.md_class_attributes (attribute_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;
 
-ALTER TABLE kloopzcm.dj_rfc_ci_attributes ADD CONSTRAINT dj_rfc_ci_attributes_atrid_fk
+ALTER TABLE cmsdb.dj_rfc_ci_attributes ADD CONSTRAINT dj_rfc_ci_attributes_atrid_fk
 FOREIGN KEY (attribute_id)
-REFERENCES kloopzcm.md_class_attributes (attribute_id)
+REFERENCES cmsdb.md_class_attributes (attribute_id)
 ON DELETE RESTRICT
 ON UPDATE RESTRICT
 NOT DEFERRABLE;

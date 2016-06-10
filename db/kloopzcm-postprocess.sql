@@ -1,63 +1,63 @@
-﻿CREATE SEQUENCE kloopzcm.md_pk_seq
+﻿CREATE SEQUENCE cmsdb.md_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE kloopzcm.md_pk_seq OWNER TO kloopzcm;
-COMMENT ON SEQUENCE kloopzcm.md_pk_seq IS 'metadata pk sequenece';
+ALTER TABLE cmsdb.md_pk_seq OWNER TO cmsdb;
+COMMENT ON SEQUENCE cmsdb.md_pk_seq IS 'metadata pk sequenece';
 
-CREATE SEQUENCE kloopzcm.cm_pk_seq
+CREATE SEQUENCE cmsdb.cm_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE kloopzcm.cm_pk_seq OWNER TO kloopzcm;
-COMMENT ON SEQUENCE kloopzcm.cm_pk_seq IS 'cm pk sequenece';
+ALTER TABLE cmsdb.cm_pk_seq OWNER TO cmsdb;
+COMMENT ON SEQUENCE cmsdb.cm_pk_seq IS 'cm pk sequenece';
 
-CREATE SEQUENCE kloopzcm.ns_pk_seq
+CREATE SEQUENCE cmsdb.ns_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE kloopzcm.ns_pk_seq OWNER TO kloopzcm;
-COMMENT ON SEQUENCE kloopzcm.ns_pk_seq IS 'ns pk sequenece';
+ALTER TABLE cmsdb.ns_pk_seq OWNER TO cmsdb;
+COMMENT ON SEQUENCE cmsdb.ns_pk_seq IS 'ns pk sequenece';
 
-CREATE SEQUENCE kloopzcm.dj_pk_seq
+CREATE SEQUENCE cmsdb.dj_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE kloopzcm.dj_pk_seq OWNER TO kloopzcm;
-COMMENT ON SEQUENCE kloopzcm.dj_pk_seq IS 'dj pk sequenece';
+ALTER TABLE cmsdb.dj_pk_seq OWNER TO cmsdb;
+COMMENT ON SEQUENCE cmsdb.dj_pk_seq IS 'dj pk sequenece';
 
-CREATE SEQUENCE kloopzcm.event_pk_seq
+CREATE SEQUENCE cmsdb.event_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE kloopzcm.event_pk_seq OWNER TO kloopzcm;
-COMMENT ON SEQUENCE kloopzcm.event_pk_seq IS 'pk sequenece for events';
+ALTER TABLE cmsdb.event_pk_seq OWNER TO cmsdb;
+COMMENT ON SEQUENCE cmsdb.event_pk_seq IS 'pk sequenece for events';
 
-CREATE SEQUENCE kloopzcm.log_pk_seq
+CREATE SEQUENCE cmsdb.log_pk_seq
    INCREMENT 1
    START 1000;
-ALTER TABLE kloopzcm.log_pk_seq OWNER TO kloopzcm;
-COMMENT ON SEQUENCE kloopzcm.log_pk_seq IS 'pk sequenece for logs';
+ALTER TABLE cmsdb.log_pk_seq OWNER TO cmsdb;
+COMMENT ON SEQUENCE cmsdb.log_pk_seq IS 'pk sequenece for logs';
 
-ALTER TABLE kloopzcm.md_classes ADD COLUMN format TEXT;
+ALTER TABLE cmsdb.md_classes ADD COLUMN format TEXT;
 
-ALTER TABLE kloopzcm.dj_deployment ADD COLUMN comments text;
-ALTER TABLE kloopzcm.dj_deployment ADD COLUMN ops text;
+ALTER TABLE cmsdb.dj_deployment ADD COLUMN comments text;
+ALTER TABLE cmsdb.dj_deployment ADD COLUMN ops text;
 
-ALTER TABLE kloopzcm.dj_deployment_rfc ADD COLUMN ops text;
+ALTER TABLE cmsdb.dj_deployment_rfc ADD COLUMN ops text;
 
-ALTER TABLE kloopzcm.md_class_attributes ADD COLUMN is_immutable BOOLEAN DEFAULT false NOT NULL;
+ALTER TABLE cmsdb.md_class_attributes ADD COLUMN is_immutable BOOLEAN DEFAULT false NOT NULL;
 
-ALTER TABLE kloopzcm.md_class_actions ADD COLUMN arguments TEXT;
+ALTER TABLE cmsdb.md_class_actions ADD COLUMN arguments TEXT;
 
-ALTER TABLE kloopzcm.md_classes ADD COLUMN flags INTEGER DEFAULT 0 NOT NULL;
+ALTER TABLE cmsdb.md_classes ADD COLUMN flags INTEGER DEFAULT 0 NOT NULL;
 
-ALTER TABLE kloopzcm.cm_ci_log ADD COLUMN created_by character varying(200);
-ALTER TABLE kloopzcm.cm_ci_log ADD COLUMN updated_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_log ADD COLUMN created_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_log ADD COLUMN updated_by character varying(200);
 
-ALTER TABLE kloopzcm.cm_ci_attribute_log ADD COLUMN created_by character varying(200);
-ALTER TABLE kloopzcm.cm_ci_attribute_log ADD COLUMN updated_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_attribute_log ADD COLUMN created_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_attribute_log ADD COLUMN updated_by character varying(200);
 
-ALTER TABLE kloopzcm.cm_ci_relation_log ADD COLUMN created_by character varying(200);
-ALTER TABLE kloopzcm.cm_ci_relation_log ADD COLUMN updated_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_relation_log ADD COLUMN created_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_relation_log ADD COLUMN updated_by character varying(200);
 
-ALTER TABLE kloopzcm.cm_ci_relation_attr_log ADD COLUMN created_by character varying(200);
-ALTER TABLE kloopzcm.cm_ci_relation_attr_log ADD COLUMN updated_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_relation_attr_log ADD COLUMN created_by character varying(200);
+ALTER TABLE cmsdb.cm_ci_relation_attr_log ADD COLUMN updated_by character varying(200);
 
 
 ALTER TABLE dj_rfc_ci DROP CONSTRAINT dj_rfc_rid_fk;
@@ -74,8 +74,8 @@ ALTER TABLE dj_rfc_relation
       REFERENCES dj_releases (release_id) MATCH SIMPLE
       ON UPDATE RESTRICT ON DELETE CASCADE;
 
-      
-CREATE TABLE kloopzcm.ns_opt (
+
+CREATE TABLE cmsdb.ns_opt (
                 ci_id BIGINT NOT NULL,
                 ns_id BIGINT NOT NULL,
                 created TIMESTAMP NOT NULL,
@@ -84,46 +84,46 @@ CREATE TABLE kloopzcm.ns_opt (
 
 
 CREATE INDEX ns_opt_ns_id_idx
- ON kloopzcm.ns_opt
+ ON cmsdb.ns_opt
  ( ns_id );
-      
-ALTER TABLE kloopzcm.ns_opt ADD CONSTRAINT ns_path_ns_opt_fk
+
+ALTER TABLE cmsdb.ns_opt ADD CONSTRAINT ns_path_ns_opt_fk
 FOREIGN KEY (ns_id)
-REFERENCES kloopzcm.ns_namespaces (ns_id)
+REFERENCES cmsdb.ns_namespaces (ns_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
-NOT DEFERRABLE;      
+NOT DEFERRABLE;
 
 
 CREATE INDEX cm_ops_proc_ci_id_idx
- ON kloopzcm.cm_ops_procedures
+ ON cmsdb.cm_ops_procedures
  ( ci_id );
 
 CREATE INDEX cm_ops_proc_state_id_idx
- ON kloopzcm.cm_ops_procedures
+ ON cmsdb.cm_ops_procedures
  ( state_id );
 
 CREATE INDEX cm_ops_actions_proc_id_idx
- ON kloopzcm.cm_ops_actions
+ ON cmsdb.cm_ops_actions
  ( ops_proc_id );
 
 CREATE INDEX cm_ops_actions_ci_id_idx
- ON kloopzcm.cm_ops_actions
+ ON cmsdb.cm_ops_actions
  ( ci_id );
 
 CREATE INDEX cm_ops_actions_state_id_idx
- ON kloopzcm.cm_ops_actions
+ ON cmsdb.cm_ops_actions
  ( state_id );
 
 CREATE UNIQUE INDEX dj_dpmt_state_idx
    ON dj_deployment (release_id, state_id) where state_id in (100, 300, 500);
- 
+
 CREATE UNIQUE INDEX dj_release_state_idx
    ON dj_releases (ns_id, release_state_id) where release_state_id = 100;
 
 CREATE UNIQUE INDEX md_class_attr_name_idx
    ON md_class_attributes (class_id ASC NULLS LAST, attribute_name ASC NULLS LAST);
-   
+
 insert into md_classes (class_id, class_name, short_class_name, access_level, is_namespace, description)
 values (100, 'Ci','Ci','global', false,'This is basic super class, all classes will extend this one');
 

@@ -8,7 +8,7 @@ $BODY$
 DECLARE
     l_attribute_name character varying;
 BEGIN
-    select into l_attribute_name a.attribute_name 
+    select into l_attribute_name a.attribute_name
     from md_class_attributes a
     where a.attribute_id = p_attribute_id;
 
@@ -16,19 +16,19 @@ BEGIN
     values (nextval('cm_pk_seq'), p_ci_id, p_attribute_id, p_df_value, p_dj_value, p_owner, p_comments)
     returning ci_attribute_id into out_ci_attr_id;
 
-    insert into cm_ci_attribute_log(log_id, log_time, log_event, ci_id, ci_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old) 
+    insert into cm_ci_attribute_log(log_id, log_time, log_event, ci_id, ci_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old)
     values (nextval('log_pk_seq'), now(), 100, p_ci_id, out_ci_attr_id, p_attribute_id, l_attribute_name, p_comments, p_owner, p_dj_value, p_dj_value, p_df_value, p_df_value);
 
     if p_event = true then
 	    insert into cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
     	values (nextval('event_pk_seq'), p_ci_id, 'cm_ci' , 200);
 	end if;
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_add_ci_attribute(bigint, integer, text, text, character varying, character varying, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION cm_add_ci_attribute(bigint, integer, text, text, character varying, character varying, boolean) OWNER TO cmsuser;
 
 
 -- Function: cm_add_ci_rel_attribute(bigint, integer, text, text, character varying, character varying)
@@ -41,7 +41,7 @@ $BODY$
 DECLARE
     l_attribute_name character varying;
 BEGIN
-    select into l_attribute_name a.attribute_name 
+    select into l_attribute_name a.attribute_name
     from md_relation_attributes a
     where a.attribute_id = p_attribute_id;
 
@@ -49,19 +49,19 @@ BEGIN
     values (nextval('cm_pk_seq'), p_ci_rel_id, p_attribute_id, p_df_value, p_dj_value, p_owner, p_comments)
     returning ci_rel_attribute_id into out_ci_rel_attr_id;
 
-    insert into cm_ci_relation_attr_log(log_id, log_time, log_event, ci_relation_id, ci_rel_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old) 
+    insert into cm_ci_relation_attr_log(log_id, log_time, log_event, ci_relation_id, ci_rel_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old)
     values (nextval('log_pk_seq'), now(), 100, p_ci_rel_id, out_ci_rel_attr_id, p_attribute_id, l_attribute_name, p_comments, p_owner, p_dj_value, p_dj_value, p_df_value, p_df_value);
 
     if p_event = true then
 	    insert into cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
     	values (nextval('event_pk_seq'), p_ci_rel_id, 'cm_ci_rel' , 200);
 	end if;
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_add_ci_rel_attribute(bigint, integer, text, text, character varying, character varying, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION cm_add_ci_rel_attribute(bigint, integer, text, text, character varying, character varying, boolean) OWNER TO cmsuser;
 
 -- Function: cm_create_ci(bigint, bigint, integer, character varying, character varying, character varying, integer, character varying)
 
@@ -76,7 +76,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_create_ci(bigint, bigint, integer, character varying, character varying, character varying, integer, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_create_ci(bigint, bigint, integer, character varying, character varying, character varying, integer, character varying) OWNER TO cmsuser;
 
 
 -- Function: cm_create_ci(bigint, bigint, integer, character varying, character varying, character varying, integer, bigint, character varying)
@@ -89,7 +89,7 @@ $BODY$
 DECLARE
 	l_class_name character varying;
 BEGIN
-    select into l_class_name cl.class_name 
+    select into l_class_name cl.class_name
     from md_classes cl
     where cl.class_id = p_class_id;
 
@@ -106,7 +106,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_create_ci(bigint, bigint, integer, character varying, character varying, character varying, integer, bigint, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_create_ci(bigint, bigint, integer, character varying, character varying, character varying, integer, bigint, character varying) OWNER TO cmsuser;
 
 
 -- Function: cm_create_relation(bigint, bigint, bigint, integer, bigint, character varying, character varying, integer)
@@ -122,7 +122,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_create_relation(bigint, bigint, bigint, integer, bigint, character varying, character varying, integer) OWNER TO kloopzcm;
+ALTER FUNCTION cm_create_relation(bigint, bigint, bigint, integer, bigint, character varying, character varying, integer) OWNER TO cmsuser;
 
 
 -- Function: cm_create_relation(bigint, bigint, bigint, integer, bigint, character varying, character varying, integer, bigint)
@@ -134,24 +134,24 @@ CREATE OR REPLACE FUNCTION cm_create_relation(p_ci_relation_id bigint, p_ns_id b
 $BODY$
 BEGIN
 
-    begin 		
+    begin
 		insert into cm_ci_relations (ci_relation_id, ns_id, from_ci_id, relation_goid, relation_id, to_ci_id, ci_state_id, comments, last_applied_rfc_id)
 		values (p_ci_relation_id, p_ns_id, p_from_ci_id, p_rel_goid, p_relation_id, p_to_ci_id, p_state_id, p_comments, p_last_rfc_id);
-    
+
 		insert into cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
     	values (nextval('event_pk_seq'), p_ci_relation_id, 'cm_ci_rel' , 200);
 
-		insert into cm_ci_relation_log(log_id, log_time, log_event, ci_relation_id, from_ci_id, to_ci_id, ci_state_id, ci_state_id_old, comments) 
+		insert into cm_ci_relation_log(log_id, log_time, log_event, ci_relation_id, from_ci_id, to_ci_id, ci_state_id, ci_state_id_old, comments)
 		values (nextval('log_pk_seq'), now(), 100, p_ci_relation_id, p_from_ci_id, p_to_ci_id, p_state_id, p_state_id, p_comments);
     exception when integrity_constraint_violation then
 		raise notice '% %', sqlerrm, sqlstate;
     end;
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_create_relation(bigint, bigint, bigint, integer, bigint, character varying, character varying, integer, bigint) OWNER TO kloopzcm;
+ALTER FUNCTION cm_create_relation(bigint, bigint, bigint, integer, bigint, character varying, character varying, integer, bigint) OWNER TO cmsuser;
 
 -- Function: (bigint, boolean)
 
@@ -172,39 +172,39 @@ DECLARE
     l_flags integer;
 BEGIN
 
-    select into l_ci_name, l_is_namespace, l_this_ns_path, l_class_id, l_class_name, l_comments, l_state_id, l_flags, l_created_by   
-		ci.ci_name, cl.is_namespace, ns.ns_path, cl.class_id, cl.class_name, ci.comments, ci.ci_state_id, cl.flags, ci.created_by  
+    select into l_ci_name, l_is_namespace, l_this_ns_path, l_class_id, l_class_name, l_comments, l_state_id, l_flags, l_created_by
+		ci.ci_name, cl.is_namespace, ns.ns_path, cl.class_id, cl.class_name, ci.comments, ci.ci_state_id, cl.flags, ci.created_by
     from cm_ci ci, md_classes cl, ns_namespaces ns
     where ci.ci_id = p_ci_id
       and ci.class_id = cl.class_id
       and ci.ns_id = ns.ns_id;
 
-    if l_ci_name is not null then  
+    if l_ci_name is not null then
 	    if l_is_namespace = true then
 	        if l_this_ns_path = '/' then
 	           if (l_flags::bit(2) & B'10')::integer > 0 then
-			      perform ns_delete_namespace('/' || l_class_name || '/' ||  l_ci_name);	
+			      perform ns_delete_namespace('/' || l_class_name || '/' ||  l_ci_name);
 	           else
-			      perform ns_delete_namespace('/' ||  l_ci_name);	
+			      perform ns_delete_namespace('/' ||  l_ci_name);
 		       end if;
-		    else 
-		       if (l_flags::bit(2) & B'10')::integer > 0 then 
-			      perform ns_delete_namespace(l_this_ns_path || '/' || l_class_name || '/' || l_ci_name);	
+		    else
+		       if (l_flags::bit(2) & B'10')::integer > 0 then
+			      perform ns_delete_namespace(l_this_ns_path || '/' || l_class_name || '/' || l_ci_name);
 		       else
-			      perform ns_delete_namespace(l_this_ns_path || '/' ||  l_ci_name);	
+			      perform ns_delete_namespace(l_this_ns_path || '/' ||  l_ci_name);
 		       end if;
-		    end if;	
-	    end if;   
-	
-	    if p_delete4real then	
-	
+		    end if;
+	    end if;
+
+	    if p_delete4real then
+
 	    	insert into cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
 		    values (nextval('event_pk_seq'), p_ci_id, 'cm_ci' , 300);
-		
+
 		    insert into cm_ci_log(log_id, log_time, log_event, ci_id, ci_name, class_id, class_name, comments, ci_state_id, ci_state_id_old, created_by, updated_by)
 		    values (nextval('log_pk_seq'), now(), 300, p_ci_id, l_ci_name, l_class_id, l_class_name, l_comments, l_state_id, l_state_id, l_created_by, p_deleted_by);
-		
-		    delete from cm_ci where ci_id = p_ci_id; 
+
+		    delete from cm_ci where ci_id = p_ci_id;
 	    else
 	        update cm_ci
 	        set ci_state_id = 200, --pending_delete
@@ -212,12 +212,12 @@ BEGIN
 	        where ci_id = p_ci_id;
 	    end if;
     end if;
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_delete_ci(bigint, boolean, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_delete_ci(bigint, boolean, character varying) OWNER TO cmsuser;
 
 -- Function: cm_delete_relation(bigint, boolean)
 
@@ -233,21 +233,21 @@ DECLARE
     l_state_id integer;
 BEGIN
 
-    select into l_from_ci_id, l_to_ci_id, l_comments, l_state_id   
-                r.from_ci_id, r.to_ci_id, r.comments, r.ci_state_id  
+    select into l_from_ci_id, l_to_ci_id, l_comments, l_state_id
+                r.from_ci_id, r.to_ci_id, r.comments, r.ci_state_id
     from cm_ci_relations r
     where r.ci_relation_id = p_ci_relation_id;
 
     if p_delete4real then
 
-        delete from cm_ci_relations where ci_relation_id = p_ci_relation_id; 
-        
+        delete from cm_ci_relations where ci_relation_id = p_ci_relation_id;
+
         insert into cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
     	values (nextval('event_pk_seq'), p_ci_relation_id, 'cm_ci_rel' , 300);
-    	
-        -- if relation still exists and not deleted as cascade deletion on ci - put it in the log	
-        if l_from_ci_id is not null then 
-	       insert into cm_ci_relation_log(log_id, log_time, log_event, ci_relation_id, from_ci_id, to_ci_id, ci_state_id, ci_state_id_old, comments) 
+
+        -- if relation still exists and not deleted as cascade deletion on ci - put it in the log
+        if l_from_ci_id is not null then
+	       insert into cm_ci_relation_log(log_id, log_time, log_event, ci_relation_id, from_ci_id, to_ci_id, ci_state_id, ci_state_id_old, comments)
 	       values (nextval('log_pk_seq'), now(), 300, p_ci_relation_id, l_from_ci_id, l_to_ci_id, l_state_id, l_state_id, l_comments);
         end if;
 
@@ -257,14 +257,14 @@ BEGIN
 	    set ci_state_id = 200, --pending deletion
 	        updated = now()
 	    where ci_relation_id = p_ci_relation_id;
-    
+
 	end if;
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_delete_relation(bigint, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION cm_delete_relation(bigint, boolean) OWNER TO cmsuser;
 
 
 -- Function: cm_update_ci(bigint, character varying, character varying, integer, character varying)
@@ -280,7 +280,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_update_ci(bigint, character varying, character varying, integer, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_update_ci(bigint, character varying, character varying, integer, character varying) OWNER TO cmsuser;
 
 
 -- Function: cm_update_ci(bigint, character varying, character varying, integer, bigint, character varying)
@@ -297,14 +297,14 @@ DECLARE
     l_comments character varying;
     l_state_id integer;
 BEGIN
-    select into l_class_id, l_class_name, l_ci_name, l_comments, l_state_id   
-		 cl.class_id, cl.class_name, ci.ci_name, ci.comments, ci.ci_state_id  
+    select into l_class_id, l_class_name, l_ci_name, l_comments, l_state_id
+		 cl.class_id, cl.class_name, ci.ci_name, ci.comments, ci.ci_state_id
     from cm_ci ci, md_classes cl
     where ci.ci_id = p_ci_id
       and ci.class_id = cl.class_id;
 
-    update cm_ci 
-     set ci_name = coalesce(p_ci_name, ci_name), 
+    update cm_ci
+     set ci_name = coalesce(p_ci_name, ci_name),
          comments = coalesce(p_comments, comments),
          ci_state_id = coalesce(p_state_id, ci_state_id),
          last_applied_rfc_id = coalesce(p_last_rfc_id, last_applied_rfc_id),
@@ -317,12 +317,12 @@ BEGIN
 
     insert into cm_ci_log(log_id, log_time, log_event, ci_id, ci_name, class_id, class_name, comments, ci_state_id, ci_state_id_old, updated_by)
     values (nextval('log_pk_seq'), now(), 200, p_ci_id, coalesce(p_ci_name, l_ci_name), l_class_id, l_class_name, coalesce(p_comments, l_comments), l_state_id, coalesce(p_state_id, l_state_id), p_updated_by);
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_update_ci(bigint, character varying, character varying, integer, bigint, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_update_ci(bigint, character varying, character varying, integer, bigint, character varying) OWNER TO cmsuser;
 
 
 -- Function: cm_update_rel(bigint, character varying, integer, bigint)
@@ -334,7 +334,7 @@ CREATE OR REPLACE FUNCTION cm_update_rel(p_rel_id bigint, p_comments character v
 $BODY$
 BEGIN
 
-    update cm_ci_relations 
+    update cm_ci_relations
      set comments = coalesce(p_comments, comments),
          ci_state_id = coalesce(p_state_id, ci_state_id),
          last_applied_rfc_id = coalesce(p_last_rfc_id, last_applied_rfc_id)
@@ -343,14 +343,14 @@ BEGIN
     insert into cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
     values (nextval('event_pk_seq'), p_rel_id, 'cm_ci_rel' , 200);
 
-    --insert into cm_ci_relation_log(log_id, log_time, log_event, ci_relation_id, from_ci_id, to_ci_id, ci_state_id, ci_state_id_old, comments) 
+    --insert into cm_ci_relation_log(log_id, log_time, log_event, ci_relation_id, from_ci_id, to_ci_id, ci_state_id, ci_state_id_old, comments)
     --values (nextval('log_pk_seq'), now(), 200, p_ci_relation_id, p_from_ci_id, p_to_ci_id, p_state_id, p_state_id, p_comments);
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_update_rel(bigint, character varying, integer, bigint) OWNER TO kloopzcm;
+ALTER FUNCTION cm_update_rel(bigint, character varying, integer, bigint) OWNER TO cmsuser;
 
 
 
@@ -368,10 +368,10 @@ DECLARE
 	l_dj_attribute_value text;
 	l_df_attribute_value text;
 BEGIN
-    select into l_dj_attribute_value, l_df_attribute_value, l_attribute_id, l_attribute_name   
-		 a.dj_attribute_value, a.df_attribute_value, a.attribute_id, cl.attribute_name   
+    select into l_dj_attribute_value, l_df_attribute_value, l_attribute_id, l_attribute_name
+		 a.dj_attribute_value, a.df_attribute_value, a.attribute_id, cl.attribute_name
     from cm_ci_attributes a, md_class_attributes cl
-    where a.ci_attribute_id = p_ci_attr_id 
+    where a.ci_attribute_id = p_ci_attr_id
       and a.attribute_id = cl.attribute_id;
 
     update cm_ci_attributes set
@@ -387,14 +387,14 @@ BEGIN
     set updated = now()
     where ci_id = l_ci_id;
 
-    insert into cm_ci_attribute_log(log_id, log_time, log_event, ci_id, ci_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old) 
+    insert into cm_ci_attribute_log(log_id, log_time, log_event, ci_id, ci_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old)
     values (nextval('log_pk_seq'), now(), 200, l_ci_id, p_ci_attr_id, l_attribute_id, l_attribute_name, p_comments, p_owner, coalesce(p_dj_value, l_dj_attribute_value), l_dj_attribute_value, coalesce(p_df_value, l_df_attribute_value), l_df_attribute_value);
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_update_ci_attribute(bigint, text, text, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_update_ci_attribute(bigint, text, text, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: cm_update_rel_attribute(bigint, text, text, character varying, character varying)
 
@@ -410,10 +410,10 @@ DECLARE
 	l_dj_attribute_value text;
 	l_df_attribute_value text;
 BEGIN
-    select into l_dj_attribute_value, l_df_attribute_value, l_attribute_id, l_attribute_name   
-		 a.dj_attribute_value, a.df_attribute_value, a.attribute_id, cl.attribute_name   
+    select into l_dj_attribute_value, l_df_attribute_value, l_attribute_id, l_attribute_name
+		 a.dj_attribute_value, a.df_attribute_value, a.attribute_id, cl.attribute_name
     from cm_ci_relation_attributes a, md_relation_attributes cl
-    where a.ci_rel_attribute_id = p_ci_rel_attr_id 
+    where a.ci_rel_attribute_id = p_ci_rel_attr_id
       and a.attribute_id = cl.attribute_id;
 
     update cm_ci_relation_attributes set
@@ -429,14 +429,14 @@ BEGIN
     set updated = now()
     where ci_relation_id = l_ci_rel_id;
 
-    insert into cm_ci_relation_attr_log(log_id, log_time, log_event, ci_relation_id, ci_rel_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old) 
+    insert into cm_ci_relation_attr_log(log_id, log_time, log_event, ci_relation_id, ci_rel_attribute_id, attribute_id, attribute_name, comments, owner, dj_attribute_value, dj_attribute_value_old, df_attribute_value, df_attribute_value_old)
     values (nextval('log_pk_seq'), now(), 200, l_ci_rel_id, p_ci_rel_attr_id, l_attribute_id, l_attribute_name, p_comments, p_owner, coalesce(p_dj_value, l_dj_attribute_value), l_dj_attribute_value, coalesce(p_df_value, l_df_attribute_value), l_df_attribute_value);
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_update_rel_attribute(bigint, text, text, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_update_rel_attribute(bigint, text, text, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: cm_vac_ns(bigint)
 
@@ -447,36 +447,36 @@ CREATE OR REPLACE FUNCTION cm_vac_ns(p_ns_id bigint, p_user character varying)
 $BODY$
 DECLARE
     l_cm_ci cm_ci%ROWTYPE;
-    l_cm_rel cm_ci_relations%ROWTYPE;    
+    l_cm_rel cm_ci_relations%ROWTYPE;
 BEGIN
 
-    for l_cm_ci in 
+    for l_cm_ci in
 	select * from cm_ci
 	where ns_id in (
-		select ns_id from ns_namespaces 
+		select ns_id from ns_namespaces
 		where ns_path like (select ns_path || '%' from ns_namespaces where ns_id = p_ns_id))
 	and ci_state_id = 200
 	order by ci_id
     loop
-	perform cm_delete_ci(l_cm_ci.ci_id, true, p_user);	
+	perform cm_delete_ci(l_cm_ci.ci_id, true, p_user);
     end loop;
 
-    for l_cm_rel in 
+    for l_cm_rel in
 	select * from cm_ci_relations
 	where ns_id in (
-		select ns_id from ns_namespaces 
+		select ns_id from ns_namespaces
 		where ns_path like (select ns_path || '%' from ns_namespaces where ns_id = p_ns_id))
 	and ci_state_id = 200
 	order by ci_relation_id
     loop
-	perform cm_delete_relation(l_cm_rel.ci_relation_id, true);	
+	perform cm_delete_relation(l_cm_rel.ci_relation_id, true);
     end loop;
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_vac_ns(bigint, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_vac_ns(bigint, character varying) OWNER TO cmsuser;
 
 -- Function: dj_cancel_deployment(bigint, character varying, character varying, character varying)
 
@@ -495,35 +495,35 @@ BEGIN
 
     select state_id into l_old_state
     from dj_deployment
-    where deployment_id = p_deployment_id;	
+    where deployment_id = p_deployment_id;
 
-    update dj_deployment 
+    update dj_deployment
 	set state_id = 400,
 	    updated_by = coalesce(p_updated_by, updated_by),
 	    description = coalesce(p_desc, description),
 	    comments = coalesce(p_comments, comments),
 	    updated = now()
     where deployment_id = p_deployment_id
-    returning release_id, description, comments, ops into l_release_id, l_desc, l_comments, l_ops;	
+    returning release_id, description, comments, ops into l_release_id, l_desc, l_comments, l_ops;
 
     insert into dj_deployment_state_hist (hist_id, deployment_id, old_state_id, new_state_id, description, comments, ops, updated_by)
-    values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, 400, l_desc, l_comments, l_ops, p_updated_by); 	
+    values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, 400, l_desc, l_comments, l_ops, p_updated_by);
 
-    update dj_deployment_rfc 
+    update dj_deployment_rfc
     set state_id = 400,
         updated = now()
-    where deployment_id = p_deployment_id 
-    and state_id = 10;	
+    where deployment_id = p_deployment_id
+    and state_id = 10;
 
     INSERT INTO cms_event_queue(event_id, source_pk, source_name, event_type_id)
-    VALUES (nextval('event_pk_seq'), p_deployment_id, 'deployment' , 200);   
+    VALUES (nextval('event_pk_seq'), p_deployment_id, 'deployment' , 200);
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_cancel_deployment(bigint, character varying, character varying, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 
 -- Function dj_create_release(bigint, bigint, bigint, character varying, character varying, bigint, character varying, character varying)
@@ -533,7 +533,7 @@ ALTER FUNCTION dj_cancel_deployment(bigint, character varying, character varying
 CREATE OR REPLACE FUNCTION dj_create_release(p_release_id bigint, p_ns_id bigint, p_parent_release_id bigint, p_release_name character varying, p_created_by character varying, p_release_state_id bigint, p_description character varying, p_revision character varying)
   RETURNS void AS
 $BODY$
-DECLARE 
+DECLARE
 BEGIN
 
 	INSERT INTO dj_releases(
@@ -541,13 +541,13 @@ BEGIN
     	VALUES (p_release_id, p_ns_id, p_parent_release_id, p_release_name, p_created_by, p_release_state_id, p_description, p_revision);
 
     INSERT INTO cms_event_queue(event_id, source_pk, source_name, event_type_id)
-    VALUES (nextval('event_pk_seq'), p_release_id, 'release' , 100);   
+    VALUES (nextval('event_pk_seq'), p_release_id, 'release' , 100);
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_create_release(bigint, bigint, bigint, character varying, character varying, bigint, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION dj_create_release(bigint, bigint, bigint, character varying, character varying, bigint, character varying, character varying) OWNER TO cmsuser;
 
 
 
@@ -567,7 +567,7 @@ BEGIN
 
     select into l_current_release_state rs.state_name
     from dj_releases r, dj_release_states rs
-    where r.release_id = p_release_id 
+    where r.release_id = p_release_id
     and r.release_state_id = rs.release_state_id;
 
     if l_current_release_state <> 'open' then
@@ -575,11 +575,11 @@ BEGIN
     end if;
 
     perform dj_commit_release_cis(p_release_id, p_set_df_value, p_new_ci_state_id, p_delete4real);
-    perform dj_commit_release_relations(p_release_id, p_set_df_value, p_new_ci_state_id, p_delete4real);	
+    perform dj_commit_release_relations(p_release_id, p_set_df_value, p_new_ci_state_id, p_delete4real);
 
     select into l_release_state release_state_id
     from dj_release_states
-    where state_name = 'closed';	
+    where state_name = 'closed';
 
     if l_release_state is not null then
        update dj_releases
@@ -589,7 +589,7 @@ BEGIN
        	   description = coalesce(p_desc, description)
        where release_id =  p_release_id;
     end if;
-    
+
     INSERT INTO cms_event_queue(event_id, source_pk, source_name, event_type_id)
     VALUES (nextval('event_pk_seq'), p_release_id, 'release' , 200);
 
@@ -597,7 +597,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_commit_release(bigint, boolean, integer, boolean, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION dj_commit_release(bigint, boolean, integer, boolean, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: dj_commit_release_cis(bigint, boolean, integer, boolean)
 
@@ -617,9 +617,9 @@ DECLARE
     l_set_df_value boolean default coalesce(p_set_df_value, false);
 BEGIN
 
-    for l_rfc_ci in 
+    for l_rfc_ci in
 	    select rci.rfc_id, rci.ci_id, rci.ns_id, rci.class_id, rci.ci_name, rci.ci_goid, rci.comments, ra.action_name, rci.created_by, rci.updated_by
-	    from dj_rfc_ci rci, dj_rfc_ci_actions ra 
+	    from dj_rfc_ci rci, dj_rfc_ci_actions ra
 	    where rci.release_id = p_release_id
 	    and rci.is_active_in_release = true
 	    and rci.action_id = ra.action_id
@@ -628,60 +628,60 @@ BEGIN
 	select into l_ci_exists count(1) from cm_ci where ci_id = l_rfc_ci.ci_id;
 
 	l_action := l_rfc_ci.action_name;
-	
+
 	if l_action = 'add' then
 	   if l_ci_exists = 0 then
 
-	      perform cm_create_ci(l_rfc_ci.ci_id, l_rfc_ci.ns_id, l_rfc_ci.class_id, l_rfc_ci.ci_goid, l_rfc_ci.ci_name, l_rfc_ci.comments, l_new_ci_state_id, l_rfc_ci.rfc_id, coalesce(l_rfc_ci.updated_by, l_rfc_ci.created_by));	
+	      perform cm_create_ci(l_rfc_ci.ci_id, l_rfc_ci.ns_id, l_rfc_ci.class_id, l_rfc_ci.ci_goid, l_rfc_ci.ci_name, l_rfc_ci.comments, l_new_ci_state_id, l_rfc_ci.rfc_id, coalesce(l_rfc_ci.updated_by, l_rfc_ci.created_by));
 
-	      for l_rfc_ci_attr in 
+	      for l_rfc_ci_attr in
 			SELECT *
 			FROM dj_rfc_ci_attributes cia
-			where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id) 
+			where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id)
           loop
 			  if l_set_df_value then
-			     l_df_value := l_rfc_ci_attr.new_attribute_value;	
+			     l_df_value := l_rfc_ci_attr.new_attribute_value;
 			  end if;
 			  perform cm_add_ci_attribute(l_rfc_ci.ci_id, l_rfc_ci_attr.attribute_id, l_df_value, l_rfc_ci_attr.new_attribute_value, l_rfc_ci_attr.owner, l_rfc_ci_attr.comments, false);
-  	      end loop;	
+  	      end loop;
 	   else
-	      l_action := 'update';	
+	      l_action := 'update';
 	   end if;
 	end if;
-	
+
 	if l_action = 'update' then
 	   if l_ci_exists > 0 then
-	   
-	      perform cm_update_ci(l_rfc_ci.ci_id, l_rfc_ci.ci_name, l_rfc_ci.comments, null, l_rfc_ci.rfc_id, coalesce(l_rfc_ci.updated_by, l_rfc_ci.created_by));	
 
-	      for l_rfc_ci_attr in 
+	      perform cm_update_ci(l_rfc_ci.ci_id, l_rfc_ci.ci_name, l_rfc_ci.comments, null, l_rfc_ci.rfc_id, coalesce(l_rfc_ci.updated_by, l_rfc_ci.created_by));
+
+	      for l_rfc_ci_attr in
 		SELECT *
 		FROM dj_rfc_ci_attributes cia
-		where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id) 
+		where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id)
               loop
 
 		  select into l_ci_attr_id ci_attribute_id
 		  from cm_ci_attributes
 		  where ci_id = l_rfc_ci.ci_id
 		  and attribute_id = l_rfc_ci_attr.attribute_id;
-			
+
 		  if l_set_df_value then
-		     l_df_value := l_rfc_ci_attr.new_attribute_value;	
+		     l_df_value := l_rfc_ci_attr.new_attribute_value;
 		  end if;
 
 		  if l_ci_attr_id is null then
 		     perform cm_add_ci_attribute(l_rfc_ci.ci_id, l_rfc_ci_attr.attribute_id, l_df_value, l_rfc_ci_attr.new_attribute_value, l_rfc_ci_attr.owner, l_rfc_ci_attr.comments, true);
-		  else 
+		  else
 		     perform cm_update_ci_attribute(l_ci_attr_id, l_df_value, l_rfc_ci_attr.new_attribute_value, l_rfc_ci_attr.owner, l_rfc_ci_attr.comments);
 		  end if;
-	      end loop;	
+	      end loop;
 	   else
-	      RAISE 'CI does not exists with ci_id: %', l_rfc_ci.ci_id USING ERRCODE = '22000';	
+	      RAISE 'CI does not exists with ci_id: %', l_rfc_ci.ci_id USING ERRCODE = '22000';
 	   end if;
 	end if;
 
 	if l_action = 'delete' then
-	   perform cm_delete_ci(l_rfc_ci.ci_id, p_delete4real, coalesce(l_rfc_ci.updated_by, l_rfc_ci.created_by));	
+	   perform cm_delete_ci(l_rfc_ci.ci_id, p_delete4real, coalesce(l_rfc_ci.updated_by, l_rfc_ci.created_by));
 	end if;
 
     end loop;
@@ -690,7 +690,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_commit_release_cis(bigint, boolean, integer, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION dj_commit_release_cis(bigint, boolean, integer, boolean) OWNER TO cmsuser;
 
 -- Function: dj_commit_release_relations(bigint, boolean, integer, boolean)
 
@@ -710,9 +710,9 @@ DECLARE
     l_set_df_value boolean default coalesce(p_set_df_value, false);
 BEGIN
 
-    for l_rfc_rel in 
+    for l_rfc_rel in
 	    select rr.rfc_id, rr.ns_id, rr.ci_relation_id, rr.from_ci_id, rr.relation_id, rr.to_ci_id, rr.relation_goid, rr.comments, ra.action_name
-	    from dj_rfc_relation rr, dj_rfc_ci_actions ra 
+	    from dj_rfc_relation rr, dj_rfc_ci_actions ra
 	    where rr.release_id = p_release_id
 	    and rr.is_active_in_release = true
 	    and rr.action_id = ra.action_id
@@ -720,59 +720,59 @@ BEGIN
     loop
 	select into l_rel_exists count(1) from cm_ci_relations where ci_relation_id = l_rfc_rel.ci_relation_id;
 	l_action := l_rfc_rel.action_name;
-	
+
 	if l_action = 'add' then
 	   if l_rel_exists = 0 then
-	      perform cm_create_relation(l_rfc_rel.ci_relation_id, l_rfc_rel.ns_id, l_rfc_rel.from_ci_id, l_rfc_rel.relation_id, l_rfc_rel.to_ci_id, l_rfc_rel.relation_goid, l_rfc_rel.comments, l_new_ci_state_id, l_rfc_rel.rfc_id);	
+	      perform cm_create_relation(l_rfc_rel.ci_relation_id, l_rfc_rel.ns_id, l_rfc_rel.from_ci_id, l_rfc_rel.relation_id, l_rfc_rel.to_ci_id, l_rfc_rel.relation_goid, l_rfc_rel.comments, l_new_ci_state_id, l_rfc_rel.rfc_id);
 
-	      for l_rfc_rel_attr in 
+	      for l_rfc_rel_attr in
 		  SELECT *
 		  FROM dj_rfc_relation_attributes ra
-		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id) 
+		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id)
               loop
 		  if l_set_df_value then
-		     l_df_value := l_rfc_rel_attr.new_attribute_value;	
+		     l_df_value := l_rfc_rel_attr.new_attribute_value;
 		  end if;
 		  perform cm_add_ci_rel_attribute(l_rfc_rel.ci_relation_id, l_rfc_rel_attr.attribute_id, l_df_value, l_rfc_rel_attr.new_attribute_value, l_rfc_rel_attr.owner, l_rfc_rel_attr.comments, false);
-	      end loop;	
+	      end loop;
 	   else
-	      l_action := 'update';	
+	      l_action := 'update';
 	   end if;
 	end if;
-	
+
 	if l_action = 'update' then
 	   if l_rel_exists > 0 then
-	   
+
 	      perform cm_update_rel(l_rfc_rel.ci_relation_id, l_rfc_rel.comments, null, l_rfc_rel.rfc_id);
-		
-	      for l_rfc_rel_attr in 
+
+	      for l_rfc_rel_attr in
 		  SELECT *
 		  FROM dj_rfc_relation_attributes ra
-		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id) 
+		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id)
               loop
 
 		  select into l_ci_rel_attr_id ci_rel_attribute_id
 		  from cm_ci_relation_attributes
 		  where ci_relation_id = l_rfc_rel.ci_relation_id
 		  and attribute_id = l_rfc_rel_attr.attribute_id;
-			
+
 		  if l_set_df_value then
-		     l_df_value := l_rfc_rel_attr.new_attribute_value;	
+		     l_df_value := l_rfc_rel_attr.new_attribute_value;
 		  end if;
 
 		  if l_ci_rel_attr_id is null then
 		     perform cm_add_ci_rel_attribute(l_rfc_rel.ci_relation_id, l_rfc_rel_attr.attribute_id, l_df_value, l_rfc_rel_attr.new_attribute_value, l_rfc_rel_attr.owner, l_rfc_rel_attr.comments, true);
-		  else 
+		  else
 		     perform cm_update_rel_attribute(l_ci_rel_attr_id, l_df_value, l_rfc_rel_attr.new_attribute_value, l_rfc_rel_attr.owner, l_rfc_rel_attr.comments);
 		  end if;
-	      end loop;	
+	      end loop;
 	   else
-	      RAISE 'Ci Relation does not exists with ci_relation_id: %', l_rfc_rel.ci_relation_id USING ERRCODE = '22000';	
+	      RAISE 'Ci Relation does not exists with ci_relation_id: %', l_rfc_rel.ci_relation_id USING ERRCODE = '22000';
 	   end if;
 	end if;
 
 	if l_action = 'delete' then
-	   perform cm_delete_relation(l_rfc_rel.ci_relation_id, p_delete4real);	
+	   perform cm_delete_relation(l_rfc_rel.ci_relation_id, p_delete4real);
 	end if;
 
     end loop;
@@ -781,7 +781,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_commit_release_relations(bigint, boolean, integer, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION dj_commit_release_relations(bigint, boolean, integer, boolean) OWNER TO cmsuser;
 
 -- Function: dj_update_release(bigint, bigint, character varying, integer, character varying, integer, character varying)
 
@@ -795,24 +795,24 @@ BEGIN
 
     update dj_releases set
     parent_release_id = p_parent_release_id,
-    release_name = p_release_name, 
+    release_name = p_release_name,
     release_state_id = p_release_state_id,
-    description = p_desc, 
+    description = p_desc,
     revision = p_revision,
-    commited_by = p_commited_by, 
+    commited_by = p_commited_by,
     updated = now()
     where release_id = p_release_id;
 
     INSERT INTO cms_event_queue(event_id, source_pk, source_name, event_type_id)
-    VALUES (nextval('event_pk_seq'), p_release_id, 'release' , 200); 
+    VALUES (nextval('event_pk_seq'), p_release_id, 'release' , 200);
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_update_release(bigint, bigint, character varying, integer, character varying, integer, character varying)
-  OWNER TO kloopzcm;
-  
+  OWNER TO cmsuser;
+
 -- Function: dj_delete_release(bigint)
 -- DROP FUNCTION dj_delete_release(bigint);
 
@@ -822,17 +822,17 @@ $BODY$
 
 BEGIN
 
-    delete from dj_releases 
+    delete from dj_releases
     where release_id = p_release_id;
 
     INSERT INTO cms_event_queue(event_id, source_pk, source_name, event_type_id)
-    VALUES (nextval('event_pk_seq'), p_release_id, 'release' , 300); 
+    VALUES (nextval('event_pk_seq'), p_release_id, 'release' , 300);
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_delete_release(bigint) OWNER TO kloopzcm;  
+ALTER FUNCTION dj_delete_release(bigint) OWNER TO cmsuser;
 
 -- Function: dj_complete_deployment(bigint)
 
@@ -857,53 +857,53 @@ l_ops text;
 l_old_state integer;
 BEGIN
 
-	select into l_incomplete count(1) 
+	select into l_incomplete count(1)
 	from dj_deployment_rfc dpmt, dj_rfc_ci rfc
 	where dpmt.deployment_id = p_deployment_id
 	and dpmt.state_id <> 200
-	and dpmt.rfc_id = rfc.rfc_id;	
+	and dpmt.rfc_id = rfc.rfc_id;
 
 	if l_incomplete > 0 then
 	RAISE EXCEPTION 'Not all rfc are complete in deployment: %', p_deployment_id USING ERRCODE = '22000';
 	end if;
 
 	for l_rel_rfc_id in
-		select dpmt.rfc_id 
+		select dpmt.rfc_id
 		from dj_deployment_rfc dpmt, dj_rfc_relation rfc
 		where dpmt.deployment_id = p_deployment_id
 		and dpmt.state_id <> 200
-		and dpmt.rfc_id = rfc.rfc_id	
+		and dpmt.rfc_id = rfc.rfc_id
 	loop
 		perform dj_promote_rfc_relations(l_rel_rfc_id, true, 100);
 
 		select into l_dpmt_complete_id state_id
 		from dj_deployment_rfc_states
-		where state_name = 'complete';	
+		where state_name = 'complete';
 
-		update dj_deployment_rfc 
-		set state_id = l_dpmt_complete_id, 
+		update dj_deployment_rfc
+		set state_id = l_dpmt_complete_id,
 		    updated = now()
 		where deployment_id = p_deployment_id
 		  and rfc_id = l_rel_rfc_id;
 
-	end loop;	   
+	end loop;
 
         select state_id into l_old_state
         from dj_deployment
-        where deployment_id = p_deployment_id;	
+        where deployment_id = p_deployment_id;
 
-	update dj_deployment 
+	update dj_deployment
 	set state_id = 200,
 	    updated = now()
 	where deployment_id = p_deployment_id
-	returning release_id, created_by, updated_by, description, comments, ops into l_release_id, l_dpmt_created_by, l_dpmt_updated_by, l_desc, l_comments, l_ops;	
+	returning release_id, created_by, updated_by, description, comments, ops into l_release_id, l_dpmt_created_by, l_dpmt_updated_by, l_desc, l_comments, l_ops;
 
 	insert into dj_deployment_state_hist (hist_id, deployment_id, old_state_id, new_state_id, description, comments, ops, updated_by)
-	values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, 200, l_desc, l_comments, l_ops, l_dpmt_updated_by); 	
+	values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, 200, l_desc, l_comments, l_ops, l_dpmt_updated_by);
 
 	select into l_release_state release_state_id
 	from dj_release_states
-	where state_name = 'closed';	
+	where state_name = 'closed';
 
 	update dj_releases
 	set release_state_id = l_release_state,
@@ -923,7 +923,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_complete_deployment(bigint)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 -- Function: dj_create_rfc_ci(bigint, bigint, bigint, bigint, integer, character varying, character varying, integer, integer, bigint, character varying, character varying)
 
@@ -932,11 +932,11 @@ ALTER FUNCTION dj_complete_deployment(bigint)
 CREATE OR REPLACE FUNCTION dj_create_rfc_ci(p_rfc_id bigint, p_release_id bigint, p_ci_id bigint, p_ns_id bigint, p_class_id integer, p_ci_name character varying, p_ci_goid character varying, p_action_id integer, p_exec_order integer, p_last_rfc_id bigint, p_comments character varying, p_created_by character varying)
   RETURNS void AS
 $BODY$
-DECLARE 
+DECLARE
     l_name_exists integer;
 BEGIN
 
-   if (p_action_id = 100) then	
+   if (p_action_id = 100) then
 	   select into l_name_exists count(1)
 	   from cm_ci
 	   where ns_id = p_ns_id
@@ -945,13 +945,13 @@ BEGIN
 
 	   if l_name_exists > 0 then
 		raise exception 'Name already exists %.', p_ci_name;
-	   end if;  	
+	   end if;
    end if;
 
    INSERT INTO dj_rfc_ci(
-            rfc_id, release_id, ci_id, ns_id, class_id, ci_name, ci_goid, 
+            rfc_id, release_id, ci_id, ns_id, class_id, ci_name, ci_goid,
             action_id, execution_order, is_active_in_release, last_rfc_id, comments, created_by)
-    VALUES (p_rfc_id, p_release_id, p_ci_id, p_ns_id, p_class_id, p_ci_name, p_ci_goid, 
+    VALUES (p_rfc_id, p_release_id, p_ci_id, p_ns_id, p_class_id, p_ci_name, p_ci_goid,
             p_action_id, p_exec_order, true, p_last_rfc_id, p_comments, p_created_by);
 
 	INSERT INTO cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
@@ -960,7 +960,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_create_rfc_ci(bigint, bigint, bigint, bigint, integer, character varying, character varying, integer, integer, bigint, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION dj_create_rfc_ci(bigint, bigint, bigint, bigint, integer, character varying, character varying, integer, integer, bigint, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: dj_create_rfc_relation(bigint, bigint, bigint, bigint, bigint, bigint, integer, character varying, bigint, bigint, integer, integer, bigint, character varying, character varying)
 
@@ -972,11 +972,11 @@ $BODY$
 BEGIN
 
     INSERT INTO dj_rfc_relation(
-            rfc_id, release_id, ns_id, ci_relation_id, from_rfc_id, from_ci_id, relation_id, relation_goid, 
+            rfc_id, release_id, ns_id, ci_relation_id, from_rfc_id, from_ci_id, relation_id, relation_goid,
             to_ci_id, to_rfc_id, action_id, execution_order, is_active_in_release, last_rfc_id, comments, created_by)
-    VALUES (p_rfc_id, p_release_id, p_ns_id, p_ci_relation_id, p_from_rfc_id, p_from_ci_id, p_relation_id, p_relation_goid, 
-            p_to_ci_id, p_to_rfc_id, p_action_id, p_exec_order, true, p_last_rfc_id, p_comments, p_created_by); 
-            
+    VALUES (p_rfc_id, p_release_id, p_ns_id, p_ci_relation_id, p_from_rfc_id, p_from_ci_id, p_relation_id, p_relation_goid,
+            p_to_ci_id, p_to_rfc_id, p_action_id, p_exec_order, true, p_last_rfc_id, p_comments, p_created_by);
+
     INSERT INTO cms_ci_event_queue(event_id, source_pk, source_name, event_type_id)
     VALUES (nextval('event_pk_seq'), p_rfc_id, 'rfc_relation' , 100);
 
@@ -984,7 +984,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_create_rfc_relation(bigint, bigint, bigint, bigint, bigint, bigint, integer, character varying, bigint, bigint, integer, integer, bigint, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION dj_create_rfc_relation(bigint, bigint, bigint, bigint, bigint, bigint, integer, character varying, bigint, bigint, integer, integer, bigint, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: dj_deploy_release(bigint, character varying, character varying, character varying, character varying, character varying)
 
@@ -996,7 +996,7 @@ $BODY$
 DECLARE
     l_rfc_ci record;
     l_ns_id bigint;
-    l_revision smallint;	
+    l_revision smallint;
     l_deployment_id bigint;
     l_dpmt_state_id integer;
 BEGIN
@@ -1011,12 +1011,12 @@ BEGIN
 
     insert into dj_deployment (deployment_id, ns_id, release_id, release_revision, state_id, created_by, description, comments, ops )
     values (nextval('dj_pk_seq'), l_ns_id, p_release_id, l_revision, l_dpmt_state_id, p_created_by, p_description, p_comments, p_ops)
-    returning deployment_id into l_deployment_id;	
+    returning deployment_id into l_deployment_id;
 
     insert into dj_deployment_state_hist (hist_id, deployment_id, old_state_id, new_state_id, description, comments, ops, updated_by)
-    values (nextval('dj_pk_seq'), l_deployment_id, null, l_dpmt_state_id, p_description, p_comments, p_ops, p_created_by); 	
+    values (nextval('dj_pk_seq'), l_deployment_id, null, l_dpmt_state_id, p_description, p_comments, p_ops, p_created_by);
 
-    for l_rfc_ci in 
+    for l_rfc_ci in
 	    select rci.rfc_id
 	    from dj_rfc_ci rci
 	    where rci.release_id = p_release_id
@@ -1030,7 +1030,7 @@ BEGIN
 
     end loop;
 
-    for l_rfc_ci in 
+    for l_rfc_ci in
 	    select rci.rfc_id
 	    from dj_rfc_relation rci
 	    where rci.release_id = p_release_id
@@ -1054,7 +1054,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_deploy_release(bigint, character varying, character varying, character varying, character varying, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 -- Function: dj_promote_rfc_ci(bigint, boolean, integer, bigint)
 
@@ -1078,7 +1078,7 @@ DECLARE
 BEGIN
 
 	select into l_rfc_ci rci.rfc_id, rci.ci_id, rci.ns_id, rci.class_id, rci.ci_name, rci.ci_goid, rci.comments, ra.action_name, rci.created_by, rci.updated_by
-	    from dj_rfc_ci rci, dj_rfc_ci_actions ra 
+	    from dj_rfc_ci rci, dj_rfc_ci_actions ra
 	    where rci.rfc_id = p_rfc_id
 	    and rci.is_active_in_release = true
 	    and rci.action_id = ra.action_id;
@@ -1094,23 +1094,23 @@ BEGIN
 	select into l_dpmt d.created_by, d.updated_by
 	 from dj_deployment d
 	 where d.deployment_id = p_dpmt_id;
-	
+
 	if l_action = 'add' then
 	   if l_ci_exists = 0 then
-	      perform cm_create_ci(l_rfc_ci.ci_id, l_rfc_ci.ns_id, l_rfc_ci.class_id, l_rfc_ci.ci_goid, l_rfc_ci.ci_name, l_rfc_ci.comments, l_new_ci_state_id, l_rfc_ci.rfc_id, l_dpmt.created_by);	
+	      perform cm_create_ci(l_rfc_ci.ci_id, l_rfc_ci.ns_id, l_rfc_ci.class_id, l_rfc_ci.ci_goid, l_rfc_ci.ci_name, l_rfc_ci.comments, l_new_ci_state_id, l_rfc_ci.rfc_id, l_dpmt.created_by);
 
-	      for l_rfc_ci_attr in 
+	      for l_rfc_ci_attr in
 			SELECT *
 			FROM dj_rfc_ci_attributes cia
-			where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id) 
+			where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id)
 		  loop
 			  if l_set_df_value then
-			     l_df_value := l_rfc_ci_attr.new_attribute_value;	
+			     l_df_value := l_rfc_ci_attr.new_attribute_value;
 			  end if;
 			  perform cm_add_ci_attribute(l_rfc_ci.ci_id, l_rfc_ci_attr.attribute_id, l_df_value, l_rfc_ci_attr.new_attribute_value, l_rfc_ci_attr.owner, l_rfc_ci_attr.comments,false);
-	      end loop;	
+	      end loop;
 	   else
-	      l_action := 'update';	
+	      l_action := 'update';
 	   end if;
 	end if;
 
@@ -1118,56 +1118,56 @@ BEGIN
 	   if l_ci_exists > 0 then
 
 	      if l_action = 'replace' then
-		perform cm_update_ci(l_rfc_ci.ci_id, l_rfc_ci.ci_name, l_rfc_ci.comments, 100, l_dpmt.created_by);	
+		perform cm_update_ci(l_rfc_ci.ci_id, l_rfc_ci.ci_name, l_rfc_ci.comments, 100, l_dpmt.created_by);
 		update cm_ci
 		set created = now(), created_by = coalesce(l_dpmt.created_by, created_by)
 		where ci_id = l_rfc_ci.ci_id;
-	      else		
-		perform cm_update_ci(l_rfc_ci.ci_id, l_rfc_ci.ci_name, l_rfc_ci.comments, null, l_dpmt.created_by);	
+	      else
+		perform cm_update_ci(l_rfc_ci.ci_id, l_rfc_ci.ci_name, l_rfc_ci.comments, null, l_dpmt.created_by);
 	      end if;
-	      
-	      for l_rfc_ci_attr in 
+
+	      for l_rfc_ci_attr in
 			SELECT *
 			FROM dj_rfc_ci_attributes cia
-			where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id) 
+			where cia.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_ci_attributes a where a.rfc_id = l_rfc_ci.rfc_id group by a.attribute_id)
 	      loop
 			  select into l_ci_attr_id ci_attribute_id
 			  from cm_ci_attributes
 			  where ci_id = l_rfc_ci.ci_id
 			  and attribute_id = l_rfc_ci_attr.attribute_id;
-				
+
 			  if l_set_df_value then
-			     l_df_value := l_rfc_ci_attr.new_attribute_value;	
+			     l_df_value := l_rfc_ci_attr.new_attribute_value;
 			  end if;
-	
+
 			  if l_ci_attr_id is null then
 			     perform cm_add_ci_attribute(l_rfc_ci.ci_id, l_rfc_ci_attr.attribute_id, l_df_value, l_rfc_ci_attr.new_attribute_value, l_rfc_ci_attr.owner, l_rfc_ci_attr.comments, true);
-			  else 
+			  else
 			     perform cm_update_ci_attribute(l_ci_attr_id, l_df_value, l_rfc_ci_attr.new_attribute_value, l_rfc_ci_attr.owner, l_rfc_ci_attr.comments);
 			  end if;
-	      end loop;	
+	      end loop;
 	   else
-	      RAISE 'CI does not exists with ci_id: %', l_rfc_ci.ci_id USING ERRCODE = '22000';	
+	      RAISE 'CI does not exists with ci_id: %', l_rfc_ci.ci_id USING ERRCODE = '22000';
 	   end if;
 	end if;
 
 	if l_action = 'delete' then
-	   perform cm_delete_ci(l_rfc_ci.ci_id, true, l_dpmt.created_by);	
+	   perform cm_delete_ci(l_rfc_ci.ci_id, true, l_dpmt.created_by);
 
 	   if p_dpmt_id is not null then
 		select into l_dpmt_complete_id state_id
 		from dj_deployment_rfc_states
-		where state_name = 'complete';	
+		where state_name = 'complete';
 
-		update dj_deployment_rfc 
-		set state_id = l_dpmt_complete_id, 
+		update dj_deployment_rfc
+		set state_id = l_dpmt_complete_id,
 		    updated = now()
 		where deployment_id = p_dpmt_id
-		  and rfc_id in (select rel.rfc_id 
+		  and rfc_id in (select rel.rfc_id
 				from dj_rfc_relation rel
 				where rel.from_ci_id = l_rfc_ci.ci_id
 				union all
-				select rel.rfc_id 
+				select rel.rfc_id
 				from dj_rfc_relation rel
 				where rel.to_ci_id = l_rfc_ci.ci_id);
 	   end if;
@@ -1175,12 +1175,12 @@ BEGIN
 	end if;
 
 	for l_rel_rfc_id in
-		select rel.rfc_id 
+		select rel.rfc_id
 		from dj_rfc_relation rel, cm_ci ci
 		where rel.from_rfc_id = p_rfc_id
 		   and ci.ci_id = rel.to_ci_id
 		union all
-		select rel.rfc_id 
+		select rel.rfc_id
 		from dj_rfc_relation rel, cm_ci ci
 		where rel.to_rfc_id = p_rfc_id
 		   and ci.ci_id = rel.from_ci_id
@@ -1190,22 +1190,22 @@ BEGIN
 		if p_dpmt_id is not null then
 			select into l_dpmt_complete_id state_id
 			from dj_deployment_rfc_states
-			where state_name = 'complete';	
+			where state_name = 'complete';
 
-			update dj_deployment_rfc 
-			set state_id = l_dpmt_complete_id, 
+			update dj_deployment_rfc
+			set state_id = l_dpmt_complete_id,
 			    updated = now()
 			where deployment_id = p_dpmt_id
 			  and rfc_id = l_rel_rfc_id;
 		end if;
 
-	end loop;	   
+	end loop;
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_promote_rfc_ci(bigint, boolean, integer, bigint) OWNER TO kloopzcm;
+ALTER FUNCTION dj_promote_rfc_ci(bigint, boolean, integer, bigint) OWNER TO cmsuser;
 
 -- Function: dj_promote_rfc_relations(bigint, boolean, integer)
 
@@ -1226,7 +1226,7 @@ DECLARE
 BEGIN
 
 	select into l_rfc_rel rr.rfc_id, rr.ns_id, rr.ci_relation_id, rr.from_ci_id, rr.relation_id, rr.to_ci_id, rr.relation_goid, rr.comments, ra.action_name
-	    from dj_rfc_relation rr, dj_rfc_ci_actions ra 
+	    from dj_rfc_relation rr, dj_rfc_ci_actions ra
 	    where rr.rfc_id = p_rfc_id
 	    and rr.is_active_in_release = true
 	    and rr.action_id = ra.action_id;
@@ -1237,64 +1237,64 @@ BEGIN
 
 	select into l_rel_exists count(1) from cm_ci_relations where ci_relation_id = l_rfc_rel.ci_relation_id;
 	l_action := l_rfc_rel.action_name;
-	
+
 	if l_action = 'add' then
 	   if l_rel_exists = 0 then
-	      perform cm_create_relation(l_rfc_rel.ci_relation_id, l_rfc_rel.ns_id, l_rfc_rel.from_ci_id, l_rfc_rel.relation_id, l_rfc_rel.to_ci_id, l_rfc_rel.relation_goid, l_rfc_rel.comments, l_new_ci_state_id);	
+	      perform cm_create_relation(l_rfc_rel.ci_relation_id, l_rfc_rel.ns_id, l_rfc_rel.from_ci_id, l_rfc_rel.relation_id, l_rfc_rel.to_ci_id, l_rfc_rel.relation_goid, l_rfc_rel.comments, l_new_ci_state_id);
 
-	      for l_rfc_rel_attr in 
+	      for l_rfc_rel_attr in
 		  SELECT *
 		  FROM dj_rfc_relation_attributes ra
-		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id) 
+		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id)
               loop
 		  if l_set_df_value then
-		     l_df_value := l_rfc_rel_attr.new_attribute_value;	
+		     l_df_value := l_rfc_rel_attr.new_attribute_value;
 		  end if;
 		  perform cm_add_ci_rel_attribute(l_rfc_rel.ci_relation_id, l_rfc_rel_attr.attribute_id, l_df_value, l_rfc_rel_attr.new_attribute_value, l_rfc_rel_attr.owner, l_rfc_rel_attr.comments, false);
-	      end loop;	
+	      end loop;
 	   else
-	      l_action := 'update';	
+	      l_action := 'update';
 	   end if;
 	end if;
-	
+
 	if l_action = 'update' then
 	   if l_rel_exists > 0 then
-	   
-	      for l_rfc_rel_attr in 
+
+	      for l_rfc_rel_attr in
 		  SELECT *
 		  FROM dj_rfc_relation_attributes ra
-		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id) 
+		  where ra.rfc_attr_id in (select max(a.rfc_attr_id) from dj_rfc_relation_attributes a where a.rfc_id = l_rfc_rel.rfc_id group by a.attribute_id)
               loop
 
 		  select into l_ci_rel_attr_id ci_rel_attribute_id
 		  from cm_ci_relation_attributes
 		  where ci_relation_id = l_rfc_rel.ci_relation_id
 		  and attribute_id = l_rfc_rel_attr.attribute_id;
-			
+
 		  if l_set_df_value then
-		     l_df_value := l_rfc_rel_attr.new_attribute_value;	
+		     l_df_value := l_rfc_rel_attr.new_attribute_value;
 		  end if;
 
 		  if l_ci_rel_attr_id is null then
 		     perform cm_add_ci_rel_attribute(l_rfc_rel.ci_relation_id, l_rfc_rel_attr.attribute_id, l_df_value, l_rfc_rel_attr.new_attribute_value, l_rfc_rel_attr.owner, l_rfc_rel_attr.comments, true);
-		  else 
+		  else
 		     perform cm_update_rel_attribute(l_ci_rel_attr_id, l_df_value, l_rfc_rel_attr.new_attribute_value, l_rfc_rel_attr.owner, l_rfc_rel_attr.comments);
 		  end if;
-	      end loop;	
+	      end loop;
 	   else
-	      RAISE 'Ci Relation does not exists with ci_relation_id: %', l_rfc_rel.ci_relation_id USING ERRCODE = '22000';	
+	      RAISE 'Ci Relation does not exists with ci_relation_id: %', l_rfc_rel.ci_relation_id USING ERRCODE = '22000';
 	   end if;
 	end if;
 
 	if l_action = 'delete' then
-	   perform cm_delete_relation(l_rfc_rel.ci_relation_id, true);	
+	   perform cm_delete_relation(l_rfc_rel.ci_relation_id, true);
 	end if;
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_promote_rfc_relations(bigint, boolean, integer) OWNER TO kloopzcm;
+ALTER FUNCTION dj_promote_rfc_relations(bigint, boolean, integer) OWNER TO cmsuser;
 
 
 -- Function: dj_retry_deployment(bigint, character varying, character varying, character varying)
@@ -1314,9 +1314,9 @@ BEGIN
 
     select state_id into l_old_state
     from dj_deployment
-    where deployment_id = p_deployment_id;	
+    where deployment_id = p_deployment_id;
 
-    update dj_deployment 
+    update dj_deployment
 	set state_id = 100,
 	    updated_by = coalesce(p_updated_by, updated_by),
 	    description = coalesce(p_desc, description),
@@ -1326,13 +1326,13 @@ BEGIN
     returning description, comments, ops, updated_by into l_desc, l_comments, l_ops, l_updated_by;
 
     insert into dj_deployment_state_hist (hist_id, deployment_id, old_state_id, new_state_id, description, comments, ops, updated_by)
-    values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, 100, l_desc, l_comments, l_ops, l_updated_by); 	
+    values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, 100, l_desc, l_comments, l_ops, l_updated_by);
 
-    update dj_deployment_rfc 
+    update dj_deployment_rfc
     set state_id = 10,
         updated = now()
-    where deployment_id = p_deployment_id 
-    and state_id = 300;	
+    where deployment_id = p_deployment_id
+    and state_id = 300;
 
     INSERT INTO cms_event_queue(event_id, source_pk, source_name, event_type_id)
     VALUES (nextval('event_pk_seq'), p_deployment_id, 'deployment' , 200);
@@ -1342,7 +1342,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_retry_deployment(bigint, character varying, character varying, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 -- Function: dj_rm_rfc_ci(bigint)
 
@@ -1362,25 +1362,25 @@ BEGIN
 	where rfc_id = p_rfc_id
 	returning ci_id into l_ci_id;
 
-	select count(1) into l_ci_exists 
+	select count(1) into l_ci_exists
 	from cm_ci where ci_id = l_ci_id;
 
 	if l_ci_exists = 0 then
         -- we need to clean up all the rels rfcs for this guy since no ci exists
-	      for l_rel_rfc_id in 
+	      for l_rel_rfc_id in
 			select rfc_id from dj_rfc_relation where from_rfc_id = p_rfc_id
 			union all
-			select rfc_id from dj_rfc_relation where to_rfc_id = p_rfc_id	      
+			select rfc_id from dj_rfc_relation where to_rfc_id = p_rfc_id
 	      loop
 		  perform dj_rm_rfc_rel(l_rel_rfc_id);
-	      end loop;	 
+	      end loop;
 	end if;
-	
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_rm_rfc_ci(bigint) OWNER TO kloopzcm;
+ALTER FUNCTION dj_rm_rfc_ci(bigint) OWNER TO cmsuser;
 
 -- Function: dj_rm_rfc_rel(bigint)
 
@@ -1398,7 +1398,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_rm_rfc_rel(bigint) OWNER TO kloopzcm;
+ALTER FUNCTION dj_rm_rfc_rel(bigint) OWNER TO cmsuser;
 
 
 -- Function: dj_upd_deployment(bigint, character varying, character varying, character varying, character varying, character varying)
@@ -1413,13 +1413,13 @@ DECLARE
  l_old_state integer;
  l_desc text;
  l_comments text;
- l_ops text; 
+ l_ops text;
 BEGIN
 
     if 	p_state is not null then
 	    select into l_state_id state_id
 	    from dj_deployment_states
-	    where state_name = p_state;	
+	    where state_name = p_state;
 
 	    if l_state_id is null then
 		RAISE EXCEPTION 'Can not resolve state: %', p_state USING ERRCODE = '22000';
@@ -1427,10 +1427,10 @@ BEGIN
 
 	    select into l_old_state state_id
 	    from dj_deployment
-	    where deployment_id = p_deployment_id;	
+	    where deployment_id = p_deployment_id;
     end if;
-	
-    update dj_deployment 
+
+    update dj_deployment
 	set state_id = coalesce(l_state_id, state_id),
 	    updated_by = coalesce(p_updated_by, updated_by),
 	    description = coalesce(p_desc, description),
@@ -1438,14 +1438,14 @@ BEGIN
 	    process_id = coalesce(p_process_id, process_id),
 	    updated = now()
     where deployment_id = p_deployment_id
-    returning description, comments, ops into  l_desc, l_comments, l_ops;	
+    returning description, comments, ops into  l_desc, l_comments, l_ops;
 
     if l_state_id is not null then
 	insert into dj_deployment_state_hist (hist_id, deployment_id, old_state_id, new_state_id, description, comments, ops, updated_by)
-	values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, l_state_id, l_desc, l_comments, l_ops, p_updated_by); 	
+	values (nextval('dj_pk_seq'), p_deployment_id, l_old_state, l_state_id, l_desc, l_comments, l_ops, p_updated_by);
     end if;
 
-    if p_state is not null and l_old_state != l_state_id then	
+    if p_state is not null and l_old_state != l_state_id then
 	    INSERT INTO cms_event_queue(event_id, source_pk, source_name, event_type_id)
 	    VALUES (nextval('event_pk_seq'), p_deployment_id, 'deployment' , 200);
     end if;
@@ -1455,7 +1455,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_upd_deployment(bigint, character varying, character varying, character varying, character varying, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 
 -- Function: dj_upd_dpmt_record_state(bigint, character varying, character varying)
@@ -1473,21 +1473,21 @@ BEGIN
 
     select into l_state_id state_id
     from dj_deployment_rfc_states
-    where state_name = p_state;	
+    where state_name = p_state;
 
     if l_state_id is null then
 	RAISE EXCEPTION 'Can not resolve state: %', p_state USING ERRCODE = '22000';
     end if;
 
-    update dj_deployment_rfc 
-	set state_id = l_state_id, 
+    update dj_deployment_rfc
+	set state_id = l_state_id,
 	    comments = coalesce(p_comments,comments),
 	    updated = now()
     where deployment_rfc_id = p_dpmt_rfc_id
     returning rfc_id, deployment_id into l_rfc_id, l_dpmt_id;
 
     if p_state = 'complete' then
-       perform dj_promote_rfc_ci(l_rfc_id, false, null, l_dpmt_id);	
+       perform dj_promote_rfc_ci(l_rfc_id, false, null, l_dpmt_id);
     end if;
 
 
@@ -1495,7 +1495,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_upd_dpmt_record_state(bigint, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION dj_upd_dpmt_record_state(bigint, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: dj_upsert_rfc_ci_attr(bigint, integer, text, character varying, character varying)
 
@@ -1508,17 +1508,17 @@ DECLARE
     l_old_attr_value text;
 BEGIN
 
-	update dj_rfc_ci_attributes 
+	update dj_rfc_ci_attributes
 	set new_attribute_value = p_new_attr_value,
 	    owner = p_owner,
 	    comments = coalesce(p_comments,comments)
 	where rfc_id = p_rfc_id
          and attribute_id = p_attribute_id
-	returning rfc_attr_id into p_rfc_attr_id;      
+	returning rfc_attr_id into p_rfc_attr_id;
 
 
-	if not FOUND then			
-		select into l_old_attr_value cia.df_attribute_value 
+	if not FOUND then
+		select into l_old_attr_value cia.df_attribute_value
 		from cm_ci_attributes cia, dj_rfc_ci rfci
 		where cia.ci_id = rfci.ci_id
 		  and rfci.rfc_id = p_rfc_id
@@ -1528,13 +1528,13 @@ BEGIN
 		    rfc_attr_id, rfc_id, attribute_id, old_attribute_value, new_attribute_value, owner, comments)
 		VALUES (nextval('dj_pk_seq'), p_rfc_id, p_attribute_id, l_old_attr_value, p_new_attr_value, p_owner, p_comments)
 		returning rfc_attr_id into p_rfc_attr_id;
-	end if;	
+	end if;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_upsert_rfc_ci_attr(bigint, integer, text, character varying, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 -- Function: dj_upsert_rfc_rel_attr(bigint, integer, text, character varying, character varying)
 
@@ -1552,11 +1552,11 @@ BEGIN
 	    comments = coalesce(p_comments,comments)
 	where rfc_id = p_rfc_id
          and attribute_id = p_attribute_id
-	returning rfc_attr_id into p_rfc_attr_id;  
+	returning rfc_attr_id into p_rfc_attr_id;
 
 	if not FOUND then
 
-		select into l_old_attr_value cra.df_attribute_value 
+		select into l_old_attr_value cra.df_attribute_value
 		from  dj_rfc_relation rfc, cm_ci_relations cr, cm_ci_relation_attributes cra
 		where rfc.rfc_id = p_rfc_id
 		  and cr.from_ci_id = rfc.from_ci_id
@@ -1564,19 +1564,19 @@ BEGIN
 		  and cr.to_ci_id = rfc.to_ci_id
 		  and cra.ci_relation_id = cr.ci_relation_id
 		  and cra.attribute_id = p_attribute_id;
-		     
+
 
 		INSERT INTO dj_rfc_relation_attributes(
 		    rfc_attr_id, rfc_id, attribute_id, old_attribute_value, new_attribute_value, owner, comments)
 		VALUES (nextval('dj_pk_seq'), p_rfc_id, p_attribute_id, l_old_attr_value, p_new_attr_value, p_owner, p_comments)
 		returning rfc_attr_id into p_rfc_attr_id;
-	end if;	
+	end if;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_upsert_rfc_rel_attr(bigint, integer, text, character varying, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 
 -- Function: ns_create_namespace(character varying)
@@ -1591,12 +1591,12 @@ BEGIN
     insert into ns_namespaces (ns_id, ns_path)
     values (nextval('cm_pk_seq'), p_ns_path)
     returning ns_id into out_ns_id;
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION ns_create_namespace(character varying) OWNER TO kloopzcm;
+ALTER FUNCTION ns_create_namespace(character varying) OWNER TO cmsuser;
 
 -- Function: ns_delete_namespace(character varying)
 
@@ -1617,18 +1617,18 @@ BEGIN
 		values (nextval('event_pk_seq'), l_ns_id, 'namespace' , 300);
 	end loop;
 
-	delete from ns_namespaces 
+	delete from ns_namespaces
 	where ns_path like p_ns_path || '/%';
 
-	delete from ns_namespaces 
+	delete from ns_namespaces
 	where ns_path = p_ns_path;
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION ns_delete_namespace(character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 
 CREATE OR REPLACE FUNCTION force_complete_dpmt(IN p_dpmt_id bigint)
@@ -1656,7 +1656,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION force_complete_dpmt(bigint) OWNER TO kloopzcm;
+ALTER FUNCTION force_complete_dpmt(bigint) OWNER TO cmsuser;
 
 -- Function: md_create_class(integer, character varying, character varying, integer, character varying, boolean, integer, character varying, character varying, character varying))
 
@@ -1674,7 +1674,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_create_class(integer, character varying, character varying, integer, character varying, boolean, integer, character varying, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_create_class(integer, character varying, character varying, integer, character varying, boolean, integer, character varying, character varying, character varying) OWNER TO cmsuser;
 
 /**
  * Add md_class_attribute. This function is provided for backward compatibility with 'p_is_immutable' is set to False.
@@ -1696,7 +1696,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION md_add_class_attribute(integer, character varying, character varying, boolean, boolean, boolean, boolean, character varying, character varying, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 /**
  * Add md_class_attributes.
@@ -1721,9 +1721,9 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION md_add_class_attribute(integer, character varying, character varying, boolean, boolean, boolean, boolean, boolean, character varying, character varying, character varying)
-  OWNER TO kloopzcm;
-  
-  
+  OWNER TO cmsuser;
+
+
 -- Function: md_delete_class(integer, boolean)
 
 -- DROP FUNCTION md_delete_class(integer, boolean);
@@ -1734,19 +1734,19 @@ $BODY$
 DECLARE
 BEGIN
 	if p_delete_all = true then
-	    delete from dj_rfc_ci where class_id = p_class_id; 
-	    delete from cm_ci where class_id = p_class_id; 
-	end if;   
-	delete from md_class_attributes where class_id = p_class_id; 
-	delete from md_class_actions where class_id = p_class_id; 
-	delete from md_class_relations where from_class_id = p_class_id or to_class_id = p_class_id; 
-	delete from md_classes where class_id = p_class_id; 
-    
+	    delete from dj_rfc_ci where class_id = p_class_id;
+	    delete from cm_ci where class_id = p_class_id;
+	end if;
+	delete from md_class_attributes where class_id = p_class_id;
+	delete from md_class_actions where class_id = p_class_id;
+	delete from md_class_relations where from_class_id = p_class_id or to_class_id = p_class_id;
+	delete from md_classes where class_id = p_class_id;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_delete_class(integer, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION md_delete_class(integer, boolean) OWNER TO cmsuser;
 
 /**
  * Delete md_class_attribute
@@ -1763,16 +1763,16 @@ DECLARE
 BEGIN
 
 	if p_delete_all = true then
-	    delete from dj_rfc_ci_attributes where attribute_id = p_attribute_id; 
-	    delete from cm_ci_attributes where attribute_id = p_attribute_id; 
-	end if;   
-	delete from md_class_attributes where attribute_id = p_attribute_id; 
-    
+	    delete from dj_rfc_ci_attributes where attribute_id = p_attribute_id;
+	    delete from cm_ci_attributes where attribute_id = p_attribute_id;
+	end if;
+	delete from md_class_attributes where attribute_id = p_attribute_id;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_delete_class_attribute(integer, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION md_delete_class_attribute(integer, boolean) OWNER TO cmsuser;
 
 -- Function: md_update_class(integer, character varying, integer, character varying, boolean, integer, character varying, character varying, character varying))
 
@@ -1784,7 +1784,7 @@ $BODY$
 DECLARE
     l_new_class_id integer;
 BEGIN
-                   
+
     update md_classes set
         short_class_name = coalesce(p_short_class_name, short_class_name),
         super_class_id = coalesce(nullif(p_super_class_id,0), super_class_id),
@@ -1799,7 +1799,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_update_class(integer, character varying, integer, character varying, boolean, integer, character varying, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_update_class(integer, character varying, integer, character varying, boolean, integer, character varying, character varying, character varying) OWNER TO cmsuser;
 
 
 /**
@@ -1832,7 +1832,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_update_class_attribute(integer, character varying, character varying, boolean, boolean, boolean, boolean, boolean, character varying, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_update_class_attribute(integer, character varying, character varying, boolean, boolean, boolean, boolean, boolean, character varying, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: md_create_relation(integer, character varying, character varying, character varying)
 
@@ -1851,7 +1851,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_create_relation(integer, character varying, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_create_relation(integer, character varying, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: md_add_relation_attribute(integer, integer, character varying, character varying, boolean, character varying, character varying, character varying)
 
@@ -1871,7 +1871,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_add_relation_attribute(integer, character varying, character varying, boolean, character varying, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_add_relation_attribute(integer, character varying, character varying, boolean, character varying, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: md_delete_relation(integer, boolean)
 
@@ -1885,17 +1885,17 @@ BEGIN
 
 	if p_delete_all = true then
 	    delete from dj_rfc_relation where relation_id = p_rel_id;
-	    delete from cm_ci_relations where relation_id = p_rel_id; 
-	end if;   
-	delete from md_class_relations where relation_id = p_rel_id; 
-	delete from md_relation_attributes where relation_id = p_rel_id; 
-	delete from md_relations where relation_id = p_rel_id; 
-    
+	    delete from cm_ci_relations where relation_id = p_rel_id;
+	end if;
+	delete from md_class_relations where relation_id = p_rel_id;
+	delete from md_relation_attributes where relation_id = p_rel_id;
+	delete from md_relations where relation_id = p_rel_id;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_delete_relation(integer, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION md_delete_relation(integer, boolean) OWNER TO cmsuser;
 
 -- Function: md_delete_relation_attribute(integer, boolean)
 
@@ -1909,15 +1909,15 @@ BEGIN
 
 	if p_delete_all = true then
 	    delete from dj_rfc_relation_attributes where attribute_id = p_attr_id;
-	    delete from cm_ci_relation_attributes where attribute_id = p_attr_id; 
-	end if;   
-	delete from md_relation_attributes where attribute_id = p_attr_id; 
-    
+	    delete from cm_ci_relation_attributes where attribute_id = p_attr_id;
+	end if;
+	delete from md_relation_attributes where attribute_id = p_attr_id;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_delete_relation_attribute(integer, boolean) OWNER TO kloopzcm;
+ALTER FUNCTION md_delete_relation_attribute(integer, boolean) OWNER TO cmsuser;
 
 -- Function: md_add_relation_target(integer, integer, integer, boolean, character varying, character varying)
 
@@ -1937,7 +1937,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_add_relation_target(integer, integer, integer, boolean, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_add_relation_target(integer, integer, integer, boolean, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: md_delete_relation_target(integer)
 
@@ -1949,13 +1949,13 @@ $BODY$
 DECLARE
 BEGIN
 
-	delete from md_class_relations where link_id = p_link_id; 
-    
+	delete from md_class_relations where link_id = p_link_id;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_delete_relation_target(integer) OWNER TO kloopzcm;
+ALTER FUNCTION md_delete_relation_target(integer) OWNER TO cmsuser;
 
 -- Function: md_update_relation(integer, character varying, character varying, character varying)
 
@@ -1974,7 +1974,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_update_relation(integer, character varying, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_update_relation(integer, character varying, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: md_update_relation_attribute(integer, integer, character varying, character varying, boolean, character varying, character varying, character varying)
 
@@ -1995,7 +1995,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_update_relation_attribute(integer, integer, character varying, character varying, boolean, character varying, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION md_update_relation_attribute(integer, integer, character varying, character varying, boolean, character varying, character varying, character varying) OWNER TO cmsuser;
 
 -- Function: md_add_class_action(integer, character varying, boolean, character varying, text)
 
@@ -2015,7 +2015,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_add_class_action(integer, character varying, boolean, character varying, text) OWNER TO kloopzcm;
+ALTER FUNCTION md_add_class_action(integer, character varying, boolean, character varying, text) OWNER TO cmsuser;
 
 
 -- Function: md_update_class_action(integer, character varying, boolean, character varying)
@@ -2039,7 +2039,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION md_update_class_action(integer, character varying, boolean, character varying, text)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 -- Function: md_delete_class_action(integer)
 
@@ -2051,13 +2051,13 @@ $BODY$
 DECLARE
 BEGIN
 
-	delete from md_class_actions where action_id = p_action_id; 
-    
+	delete from md_class_actions where action_id = p_action_id;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION md_delete_class_action(integer) OWNER TO kloopzcm;
+ALTER FUNCTION md_delete_class_action(integer) OWNER TO cmsuser;
 
 -- Function: cm_create_ops_action(character varying, bigint, bigint, integer, integer, integer, text, text, text);
 -- DROP FUNCTION cm_create_ops_action(character varying, bigint, bigint, integer, integer, integer, text, text, text);
@@ -2076,12 +2076,12 @@ BEGIN
 
     insert into cm_ops_actions (ops_action_id, ops_proc_id, ci_id, action_name, state_id, exec_order, is_critical, extra_info, arglist, payload)
     values (nextval('dj_pk_seq'), p_ops_proc_id, p_ci_id, p_action_name, l_state_id, p_exec_order, p_critical, p_extra_info, p_arglist, p_payload);
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_create_ops_action(character varying, bigint, bigint, character varying, integer, boolean, text, text, text) OWNER TO kloopzcm;
+ALTER FUNCTION cm_create_ops_action(character varying, bigint, bigint, character varying, integer, boolean, text, text, text) OWNER TO cmsuser;
 
 
 -- Function: cm_create_ops_procedure(bigint, character varying, bigint, character varying, text, character varying, text, bigint);
@@ -2105,12 +2105,12 @@ BEGIN
 
     insert into cms_event_queue(event_id, source_pk, source_name, event_type_id)
     values (nextval('event_pk_seq'), p_procedure_id, 'opsprocedure' , 100);
-    
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_create_ops_procedure(bigint, character varying, bigint, character varying, text, character varying, text, bigint) OWNER TO kloopzcm;
+ALTER FUNCTION cm_create_ops_procedure(bigint, character varying, bigint, character varying, text, character varying, text, bigint) OWNER TO cmsuser;
 
 -- Function: cm_update_ops_procedure_state(bigint, character varying)
 
@@ -2130,17 +2130,17 @@ BEGIN
     end if;
 
     update cm_ops_procedures set state_id = l_state_id, updated = now()
-    where ops_proc_id = p_proc_id;	
+    where ops_proc_id = p_proc_id;
 
     -- lets check if it's cancled then we cancel all pending action orders for this proc
 
     if l_state_id = 400 then
-    
+
 		update cm_ops_actions
 		set state_id = 400
 		where ops_proc_id = p_proc_id
 		and state_id = 10;
-	
+
     end if;
 
     insert into cms_event_queue(event_id, source_pk, source_name, event_type_id)
@@ -2151,7 +2151,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION cm_update_ops_procedure_state(bigint, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 -- Function: cm_update_ops_action_state(bigint, character varying)
 
@@ -2171,13 +2171,13 @@ BEGIN
     end if;
 
     update cm_ops_actions set state_id = l_state_id, updated = now()
-    where ops_action_id = p_action_id;	
+    where ops_action_id = p_action_id;
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_update_ops_action_state(bigint, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION cm_update_ops_action_state(bigint, character varying) OWNER TO cmsuser;
 
 -- Function: cm_is_ops_procedure_active_for_ci(bigint)
 
@@ -2201,7 +2201,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_is_ops_procedure_active_for_ci(bigint) OWNER TO kloopzcm;
+ALTER FUNCTION cm_is_ops_procedure_active_for_ci(bigint) OWNER TO cmsuser;
 
 -- Function: cm_is_opened_release_for_ci(bigint)
 
@@ -2215,13 +2215,13 @@ DECLARE
 BEGIN
 
 	select count(*) into l_open_release from dj_rfc_ci a, dj_releases b where b.release_id=a.release_id and b.release_state_id = 100 and a.ci_id = p_ci_id;
-    
+
     return l_open_release > 0;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION cm_is_opened_release_for_ci(bigint) OWNER TO kloopzcm;
+ALTER FUNCTION cm_is_opened_release_for_ci(bigint) OWNER TO cmsuser;
 
 
 -- Function: dj_create_release(bigint, bigint, bigint, character varying, character varying, integer, character varying, character varying, integer)
@@ -2235,11 +2235,11 @@ DECLARE
    l_parent_release_id bigint;
  BEGIN
 	if p_parent_release_id is null then
-	  select into l_parent_release_id max(parent_release_id) from dj_releases where ns_id = p_ns_id;	
+	  select into l_parent_release_id max(parent_release_id) from dj_releases where ns_id = p_ns_id;
 	else
 	  l_parent_release_id := p_parent_release_id;
 	end if;
- 
+
 	INSERT INTO dj_releases(
             release_id, ns_id, parent_release_id, release_name, created_by, release_state_id, release_type, description, revision)
     	VALUES (p_release_id, p_ns_id, l_parent_release_id, p_release_name, p_created_by, p_release_state_id, p_release_type, p_description, p_revision);
@@ -2250,7 +2250,7 @@ DECLARE
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_create_release(bigint, bigint, bigint, character varying, character varying, integer, character varying, character varying, integer) OWNER TO kloopzcm;
+ALTER FUNCTION dj_create_release(bigint, bigint, bigint, character varying, character varying, integer, character varying, character varying, integer) OWNER TO cmsuser;
 
 
 -- Function: dj_brush_exec_order(bigint)
@@ -2267,8 +2267,8 @@ DECLARE
 BEGIN
 
     l_exec_order = 0;
-    l_last_exec_order = 0; 	
-    for l_rfc_ci in 
+    l_last_exec_order = 0;
+    for l_rfc_ci in
 	    select rci.rfc_id, rci.execution_order
 	    from dj_rfc_ci rci
 	    where rci.release_id = p_release_id
@@ -2287,7 +2287,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_brush_exec_order(bigint) OWNER TO kloopzcm;
+ALTER FUNCTION dj_brush_exec_order(bigint) OWNER TO cmsuser;
 
 -- Function: cms_acquire_lock(character varying, character varying, integer)
 
@@ -2319,23 +2319,23 @@ BEGIN
 
     -- try to lock it
     select into l_lock_row cl.lock_id, cl.lock_name, cl.locked_by, cl.created, cl.updated
-    from cms_lock cl where cl.lock_name = p_lock_name for update;	
+    from cms_lock cl where cl.lock_name = p_lock_name for update;
 
-    if l_lock_row.locked_by = p_locked_by then 
+    if l_lock_row.locked_by = p_locked_by then
 	-- this is my lock lets update timestamp
 	update cms_lock set updated=current_timestamp where lock_id = l_lock_row.lock_id;
 	return true;
     elsif cast(extract(epoch from (current_timestamp - l_lock_row.updated)) as integer) > p_stale_timeout then
 	-- seems like the lock is stale I will hijack it
-	update cms_lock 
-	set locked_by = p_locked_by, 
-            created = current_timestamp, 
-            updated=current_timestamp 
+	update cms_lock
+	set locked_by = p_locked_by,
+            created = current_timestamp,
+            updated=current_timestamp
         where lock_id = l_lock_row.lock_id;
         return true;
     else
 	-- the lock is fresh and not mine
-	return false;	
+	return false;
     end if;
 
 END;
@@ -2343,7 +2343,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION cms_acquire_lock(character varying, character varying, integer)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 -- Function: cms_set_var(character varying, text, character varying)
 
@@ -2362,24 +2362,24 @@ BEGIN
     if l_var_cnt = 0 then
 	insert into cms_vars(var_id, var_name, var_value, updated_by, created, updated)
 	values (nextval('cm_pk_seq'), p_var_name, p_var_value, p_updated_by, now(), now());
-    else 
+    else
     	update cms_vars
     	set var_value = p_var_value,
     	    updated_by = p_updated_by,
     	    updated = now()
-    	where var_name = p_var_name;     
-    	    
+    	where var_name = p_var_name;
+
     end if;
 
- 
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION cms_set_var(character varying, text, character varying)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
-  
+
 -- Function: dj_reset_failed_records(bigint)
 
 -- DROP FUNCTION dj_reset_failed_records(bigint);
@@ -2390,18 +2390,18 @@ $BODY$
 DECLARE
 BEGIN
 
-    update dj_deployment_rfc 
+    update dj_deployment_rfc
     set state_id = 10,
         updated = now()
-    where deployment_id = p_deployment_id 
-    and state_id = 300;	
+    where deployment_id = p_deployment_id
+    and state_id = 300;
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_reset_failed_records(bigint)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;
 
 CREATE OR REPLACE FUNCTION dj_update_rfc_ci(p_rfc_id bigint, p_ci_name character varying, p_exec_order integer, p_comments character varying, p_updated_by character varying)
   RETURNS void AS
@@ -2423,7 +2423,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_update_rfc_ci(bigint, character varying, integer, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION dj_update_rfc_ci(bigint, character varying, integer, character varying, character varying) OWNER TO cmsuser;
 
 CREATE OR REPLACE FUNCTION dj_update_rfc_relation(p_rfc_id bigint, p_exec_order integer, p_comments character varying, p_updated_by character varying)
   RETURNS void AS
@@ -2444,7 +2444,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION dj_update_rfc_relation(bigint, integer, character varying, character varying) OWNER TO kloopzcm;
+ALTER FUNCTION dj_update_rfc_relation(bigint, integer, character varying, character varying) OWNER TO cmsuser;
 
 
 -- Function: dj_create_dpmt_approval(bigint, bigint, text, integer)
@@ -2465,8 +2465,8 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_create_dpmt_approval(bigint, bigint, text, integer)
-  OWNER TO kloopzcm;
-  
+  OWNER TO cmsuser;
+
 
  -- Function: dj_dpmt_upd_approvla_rec(bigint, character varying, integer, text, character varying)
 
@@ -2481,7 +2481,7 @@ BEGIN
 
 	select into l_state_id state_id
 	from dj_approval_states
-	where state_name = p_state;	
+	where state_name = p_state;
 
 	if l_state_id is null then
 	   RAISE EXCEPTION 'Can not resolve state: %', p_state USING ERRCODE = '22000';
@@ -2492,17 +2492,17 @@ BEGIN
 	    updated_by = p_updated_by,
 	    updated = now(),
 	    comments = p_comments,
-	    expires_in = coalesce(p_expires_in, expires_in) 
-	where approval_id = p_approval_id;    
+	    expires_in = coalesce(p_expires_in, expires_in)
+	where approval_id = p_approval_id;
 
  END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_dpmt_upd_approvla_rec(bigint, character varying, integer, text, character varying)
-  OWNER TO kloopzcm;
- 
-  
+  OWNER TO cmsuser;
+
+
 -- Function: dj_dpmt_approve(bigint, character varying, integer, text)
 
 -- DROP FUNCTION dj_dpmt_approve(bigint, character varying, integer, text);
@@ -2516,12 +2516,12 @@ BEGIN
 	    updated_by = p_approved_by,
 	    updated = now(),
 	    comments = p_comments,
-	    expires_in = coalesce(p_expires_in, expires_in) 
-	where approval_id = p_approval_id;    
+	    expires_in = coalesce(p_expires_in, expires_in)
+	where approval_id = p_approval_id;
 
  END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 ALTER FUNCTION dj_dpmt_approve(bigint, character varying, integer, text)
-  OWNER TO kloopzcm;
+  OWNER TO cmsuser;

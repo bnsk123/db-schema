@@ -5,7 +5,7 @@ ALTER TABLE md_classes
 ALTER TABLE dj_deployment
    ADD COLUMN process_id character varying(60);
 
-CREATE TABLE kloopzcm.cms_lock (
+CREATE TABLE cmsdb.cms_lock (
                 lock_id BIGINT NOT NULL,
                 lock_name VARCHAR(64) NOT NULL,
                 locked_by VARCHAR(200) NOT NULL,
@@ -16,5 +16,5 @@ CREATE TABLE kloopzcm.cms_lock (
 
 
 CREATE UNIQUE INDEX cms_lock_uln
- ON kloopzcm.cms_lock
+ ON cmsdb.cms_lock
  ( lock_name );

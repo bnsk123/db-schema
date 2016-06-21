@@ -34,30 +34,29 @@ CREATE SEQUENCE log_pk_seq
 ALTER TABLE log_pk_seq OWNER TO cmsuser;
 COMMENT ON SEQUENCE log_pk_seq IS 'pk sequenece for logs';
 
-ALTER TABLE md_classes ADD COLUMN format TEXT;
+-- ALTER TABLE md_classes ADD COLUMN format TEXT;
 
-ALTER TABLE dj_deployment ADD COLUMN comments text;
-ALTER TABLE dj_deployment ADD COLUMN ops text;
+-- ALTER TABLE dj_deployment ADD COLUMN comments text;
+-- ALTER TABLE dj_deployment ADD COLUMN ops text;
 
-ALTER TABLE dj_deployment_rfc ADD COLUMN ops text;
+-- ALTER TABLE dj_deployment_rfc ADD COLUMN ops text;
 
-ALTER TABLE md_class_attributes ADD COLUMN is_immutable BOOLEAN DEFAULT false NOT NULL;
+-- ALTER TABLE md_class_attributes ADD COLUMN is_immutable BOOLEAN DEFAULT false NOT NULL;
 
-ALTER TABLE md_class_actions ADD COLUMN arguments TEXT;
+-- ALTER TABLE md_class_actions ADD COLUMN arguments TEXT;
 
-ALTER TABLE md_classes ADD COLUMN flags INTEGER DEFAULT 0 NOT NULL;
+-- ALTER TABLE md_classes ADD COLUMN flags INTEGER DEFAULT 0 NOT NULL;
+--  ALTER TABLE cm_ci_log ADD COLUMN created_by character varying(200);
+-- ALTER TABLE cm_ci_log ADD COLUMN updated_by character varying(200);
 
-ALTER TABLE cm_ci_log ADD COLUMN created_by character varying(200);
-ALTER TABLE cm_ci_log ADD COLUMN updated_by character varying(200);
+-- ALTER TABLE cm_ci_attribute_log ADD COLUMN created_by character varying(200);
+-- ALTER TABLE cm_ci_attribute_log ADD COLUMN updated_by character varying(200);
 
-ALTER TABLE cm_ci_attribute_log ADD COLUMN created_by character varying(200);
-ALTER TABLE cm_ci_attribute_log ADD COLUMN updated_by character varying(200);
+-- ALTER TABLE cm_ci_relation_log ADD COLUMN created_by character varying(200);
+-- ALTER TABLE cm_ci_relation_log ADD COLUMN updated_by character varying(200);
 
-ALTER TABLE cm_ci_relation_log ADD COLUMN created_by character varying(200);
-ALTER TABLE cm_ci_relation_log ADD COLUMN updated_by character varying(200);
-
-ALTER TABLE cm_ci_relation_attr_log ADD COLUMN created_by character varying(200);
-ALTER TABLE cm_ci_relation_attr_log ADD COLUMN updated_by character varying(200);
+-- ALTER TABLE cm_ci_relation_attr_log ADD COLUMN created_by character varying(200);
+-- ALTER TABLE cm_ci_relation_attr_log ADD COLUMN updated_by character varying(200);
 
 
 ALTER TABLE dj_rfc_ci DROP CONSTRAINT dj_rfc_rid_fk;
@@ -95,34 +94,21 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 
-CREATE INDEX cm_ops_proc_ci_id_idx
- ON cm_ops_procedures
- ( ci_id );
+-- CREATE INDEX cm_ops_proc_ci_id_idx ON cm_ops_procedures   ( ci_id );
 
-CREATE INDEX cm_ops_proc_state_id_idx
- ON cm_ops_procedures
- ( state_id );
+-- CREATE INDEX cm_ops_proc_state_id_idx  ON cm_ops_procedures ( state_id );
 
-CREATE INDEX cm_ops_actions_proc_id_idx
- ON cm_ops_actions
- ( ops_proc_id );
+-- CREATE INDEX cm_ops_actions_proc_id_idx  ON cm_ops_actions  ( ops_proc_id );
 
-CREATE INDEX cm_ops_actions_ci_id_idx
- ON cm_ops_actions
- ( ci_id );
+-- CREATE INDEX cm_ops_actions_ci_id_idx ON cm_ops_actions ( ci_id );
 
-CREATE INDEX cm_ops_actions_state_id_idx
- ON cm_ops_actions
- ( state_id );
+-- CREATE INDEX cm_ops_actions_state_id_idx  ON cm_ops_actions ( state_id );
 
-CREATE UNIQUE INDEX dj_dpmt_state_idx
-   ON dj_deployment (release_id, state_id) where state_id in (100, 300, 500);
+CREATE UNIQUE INDEX dj_dpmt_state_idx ON dj_deployment (release_id, state_id) where state_id in (100, 300, 500);
 
-CREATE UNIQUE INDEX dj_release_state_idx
-   ON dj_releases (ns_id, release_state_id) where release_state_id = 100;
+CREATE UNIQUE INDEX dj_release_state_idx ON dj_releases (ns_id, release_state_id) where release_state_id = 100;
 
-CREATE UNIQUE INDEX md_class_attr_name_idx
-   ON md_class_attributes (class_id ASC NULLS LAST, attribute_name ASC NULLS LAST);
+CREATE UNIQUE INDEX md_class_attr_name_idx ON md_class_attributes (class_id ASC NULLS LAST, attribute_name ASC NULLS LAST);
 
 insert into md_classes (class_id, class_name, short_class_name, access_level, is_namespace, description)
 values (100, 'Ci','Ci','global', false,'This is basic super class, all classes will extend this one');
